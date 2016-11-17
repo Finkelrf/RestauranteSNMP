@@ -1,0 +1,87 @@
+RestCtrl-MIB DEFINITIONS ::= BEGIN
+	IMPORTS
+		enterprises,
+       MODULE-IDENTITY,
+       OBJECT-TYPE,
+       OBJECT-IDENTITY
+          FROM SNMPv2-SMI
+       Unsigned32,
+	   Integer32,
+	   Counter32,
+	   TimeTicks,
+	   NOTIFICATION-TYPE
+	      FROM SNMPv2-SMI
+	   DisplayString, TruthValue, TEXTUAL-CONVENTION
+	      FROM SNMPv2-TC;
+
+	restCtrl OBJECT IDENTIFIER ::= {enterprises 12619}
+
+	-- Restaurante entries
+	capacidade OBJECT-TYPE
+		SYNTAX Counter32
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Numero de pessoas maximo no restaurante"
+	::= {restCtrl 1}
+
+	lotAtual OBJECT-TYPE
+		SYNTAX Counter32
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Numero atual de pessoas no restaurante"
+	::= {restCtrl 2}
+
+	
+
+	mesasTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF MesasEntry
+		MAX-ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION "Numero atual de pessoas no restaurante"
+	::= {restCtrl 3}
+
+	mesasEntry OBJECT-TYPE
+		SYNTAX MesasEntry
+		MAX-ACCESS not-accessible
+		STATUS mandatory
+		DESCRIPTION "Info sobre mesas" 
+
+		INDEX { capacidadeMesa,
+			numClientes,
+			status}
+	::= {mesasTable 1}
+
+
+	MesasEntry ::=	SEQUENCE {	
+		capacidadeMesa 		INTEGER,
+		numClientes 		INTEGER,
+		status			INTEGER
+	}
+
+	capacidadeMesa OBJECT-TYPE
+		SYNTAX INTEGER(1..20)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Numero maximo de clientes na mesa"
+	::= {mesasEntry 1}
+
+	numClientes OBJECT-TYPE
+		SYNTAX INTEGER(1..20)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Numero clientes atualmente na mesa"
+	::= {mesasEntry 2}
+
+	status OBJECT-TYPE
+		SYNTAX INTEGER{ livre(0), ocupada(1), indisponivel(2)}
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Status atual da mesa"
+	::= {mesasEntry 3}
+
+
+	
+
+	
+	
+END

@@ -26,15 +26,15 @@ def getMaxCapacity():
 	return count
 
 def main():
+	
 	#~ The argparse generates the software usage automatically
+	
 	parser = argparse.ArgumentParser(description='Controle de restaurante')
-	#~ parser.add_argument('-p', dest='pedido', action='store', nargs=2, help='Adiciona pedido')
-	parser.add_argument('-c', dest='c', action='store_true', help='Obtem capacidade atual')
-	parser.add_argument('-m', dest='max_capacity', action='store_true', help='Obtem capacidade maxima')
+	parser.add_argument('-c', action='store_true', dest='c',  			 help='Obtem capacidade atual')
+	parser.add_argument('-m', action='store_true', dest='max_capacity',  help='Obtem capacidade maxima')
+	
 	args = parser.parse_args()
-	#~ print args
-
-
+	
 	if args.c:
 		print getCurrentCapacity()
 		
