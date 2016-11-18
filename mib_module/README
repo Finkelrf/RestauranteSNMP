@@ -5,7 +5,7 @@ COMO INICIAR O SNMP DAEMON:
 					sudo apt-get update
 					sudo apt-get install snmp snmp-mibs-downloader snmpd
 					
-			2 - Copiar os arquivos no diretorio net-snmp-config-files para /etc/snmp/
+			2 - Copiar os arquivos no diretorio net-snmp-config-files/*nome-integrante* para /etc/snmp/
 			
 			3 - $> service snmpd restart
 			
