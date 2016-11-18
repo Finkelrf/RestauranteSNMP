@@ -6,27 +6,25 @@
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
-#include "capacidade.h"
-#include <syslog.h>
-#include <string.h>
+#include "lotAtual.h"
 
-/** Initializes the capacidade module */
+/** Initializes the lotAtual module */
 void
-init_capacidade(void)
+init_lotAtual(void)
 {
-    const oid capacidade_oid[] = { 1,3,6,1,4,1,12619,1 };
+    const oid lotAtual_oid[] = { 1,3,6,1,4,1,12619,2 };
 
-  DEBUGMSGTL(("capacidade", "Initializing\n"));
+  DEBUGMSGTL(("lotAtual", "Initializing\n"));
 
     netsnmp_register_scalar(
-        netsnmp_create_handler_registration("capacidade", handle_capacidade,
-                               capacidade_oid, OID_LENGTH(capacidade_oid),
+        netsnmp_create_handler_registration("lotAtual", handle_lotAtual,
+                               lotAtual_oid, OID_LENGTH(lotAtual_oid),
                                HANDLER_CAN_RONLY
         ));
 }
 
 int
-handle_capacidade(netsnmp_mib_handler *handler,
+handle_lotAtual(netsnmp_mib_handler *handler,
                           netsnmp_handler_registration *reginfo,
                           netsnmp_agent_request_info   *reqinfo,
                           netsnmp_request_info         *requests)
@@ -36,19 +34,20 @@ handle_capacidade(netsnmp_mib_handler *handler,
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-       
+    
     // Modifications made by Roberto   
     FILE *output;
     char app_path[120] = APP_PYTHON_PATH;
     char buffer[20];
     unsigned long cap;
     // End of modifications by Roberto	
-    
+
     switch(reqinfo->mode) {
-		
+
         case MODE_GET:
+
 			// Modifications made by Roberto
-			strcat(app_path, "-m");
+			strcat(app_path, "-c");
 			syslog(LOG_INFO, "app_path: %s", app_path);
 			output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
 			if (!output)
@@ -59,14 +58,14 @@ handle_capacidade(netsnmp_mib_handler *handler,
 			fgets(buffer, 10, output);
 			cap = strtoul(buffer, NULL, 10);
 			// End of modifications by Roberto	
-		
-            snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER, &cap, sizeof(cap));
+
+            snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER,&cap, sizeof(cap));
             break;
 
 
         default:
             /* we should never get here, so this is a really bad error */
-            snmp_log(LOG_ERR, "unknown mode (%d) in handle_capacidade\n", reqinfo->mode );
+            snmp_log(LOG_ERR, "unknown mode (%d) in handle_lotAtual\n", reqinfo->mode );
             return SNMP_ERR_GENERR;
     }
 

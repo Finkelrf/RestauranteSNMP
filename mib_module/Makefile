@@ -2,8 +2,7 @@ CFLAGS=-O2 -Wall -g -fPIC -shared -DDEVICE_NAME=\"Aligera\ AG800\"
 LDFLAGS=-lm -lnetsnmp -lnetsnmpagent -lnetsnmphelpers -lnetsnmpmibs -Wl,--rpath,/usr/local/lib
 
 OBJS_capacidade=capacidade.o
-#OBJS_e1=e1.o 
-#OBJS_chan=chan.o 
+OBJS_lotAtual=lotAtual.o
 
 #OBJS_e1Table=e1Table.o \
 #	e1Table_interface.o \
@@ -19,7 +18,7 @@ OBJS_capacidade=capacidade.o
 #	chanTable_data_set.o \
 #	chanTraps.o
 
-all: capacidade.so 
+all: capacidade.so lotAtual.so
 #all: device.so e1.so  e1Table.so chan.so chanTable.so
 
 clean:
@@ -30,6 +29,8 @@ clean:
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o device.so $(OBJS_device)
 capacidade.so: $(OBJS_capacidade)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o capacidade.so $(OBJS_capacidade)
+lotAtual.so: $(OBJS_lotAtual)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o lotAtual.so $(OBJS_lotAtual)
 	
 #e1.so:$(OBJS_e1)
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o e1.so $(OBJS_e1)

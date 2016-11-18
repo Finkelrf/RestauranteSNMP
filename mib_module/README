@@ -1,0 +1,28 @@
+
+COMO INICIAR O SNMP DAEMON:
+			1 - Baixar pacotes DO NET-SNMP 
+				
+					sudo apt-get update
+					sudo apt-get install snmp snmp-mibs-downloader snmpd
+					
+			2 - Copiar os arquivos no diretorio net-snmp-config-files para /etc/snmp/
+			
+			3 - $> service snmpd restart
+			
+			4 - No diretorio mib_module, para gerar os arquivos .c e .h usar o script mib2c_script.sh
+			
+			5 - Editar os arquivos .c para fazer o que queremos.
+			
+			6 - $> make --> ira compilar e gerar arquivos .so 
+			
+			7 - $> make install --> copia os arquivos .so para $(ROOTFS_DIR)/lib/snmp/dlmod/ 
+									copia o RestCtrl-MIB.my para $(ROOTFS_DIR)/lib/mibs/
+									
+			8 - Editar o arquivo /etc/snmp/snmpd.conf e incluir o caminho para a biblioteca .so
+				Ex: dlmod capacidade /lib/snmp/dlmod/capacidade.so
+				
+			9 - $> service snmpd restart --> Sempre que modificar um arquivo, nao esquecer de dar esse comando.
+			
+			10 - Para testar, executar o script ./snmp_test.sh
+					
+					

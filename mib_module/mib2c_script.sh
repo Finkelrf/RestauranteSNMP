@@ -1,12 +1,12 @@
 #!/bin/sh
 
-#MIBDIRS="/usr/share/mibs/iana/"
-#MIBDIRS+=":/usr/share/mibs/ietf/"
-#MIBDIRS+=":/usr/share/mibs/netsnmp/"
-MIBDIRS+=":"$(pwd)
+MIBDIRS="/lib/mibs:/usr/share/mibs/ietf:/lib/mibs/:/usr/share/mibs/iana/:/usr/share/mibs/ietf/:/usr/share/snmp/mibs:"$(pwd)
+export MIBDIRS
 
-env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf capacidade
-#env MIBS="+ALIGERA-MIB" mib2c -c mib2c.scalar.conf e1
+
+#~ env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf capacidade
+echo env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf lotAtual
+env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf lotAtual
 #env MIBS="+ALIGERA-MIB" mib2c -c mib2c.mfd.conf e1Table
 #env MIBS="+ALIGERA-MIB" mib2c -c mib2c.notify.conf e1Traps
 

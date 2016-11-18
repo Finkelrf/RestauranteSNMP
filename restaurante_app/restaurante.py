@@ -2,7 +2,7 @@ import argparse
 
 
 tables_capacity_list = ['4p', '2p']
-CONFIG_PATH = "/home/rocordoni/Documentos/gerencia/restaurante_app/config/"
+CONFIG_PATH = "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/config/"
 MESAS_CONFIG_FILE = "mesas.conf"
 
 def getCurrentCapacity():
