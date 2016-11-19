@@ -11,41 +11,19 @@ OBJS_mesasTable=mesasTable.o \
 	mesasTable_data_get.o \
 	mesasTable_data_set.o \
 
-#OBJS_chanTable=chanTable.o \
-#	chanTable_interface.o \
-#	chanTable_data_access.o \
-#	chanTable_data_get.o \
-#	chanTable_data_set.o \
-#	chanTraps.o
-
 all: capacidade.so lotAtual.so mesasTable.so 
-#all: device.so e1.so  e1Table.so chan.so chanTable.so
 
 clean:
-#	rm -vf *.o *.so *~ e1Table chanTable
 	rm -vf *.o *.so 
 	
-#device.so: $(OBJS_device)
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o device.so $(OBJS_device)
 capacidade.so: $(OBJS_capacidade)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o capacidade.so $(OBJS_capacidade)
 lotAtual.so: $(OBJS_lotAtual)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o lotAtual.so $(OBJS_lotAtual)
 lib_restaurante.so: $(OBJS_lib_restaurante)	
-	$(CC) $(CFLAGS) $(LDFLAGS) -o lib_restaurante.so $(OBJS_lib_restaurante)
-	
-#e1.so:$(OBJS_e1)
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o e1.so $(OBJS_e1)
-	
+	$(CC) $(CFLAGS) $(LDFLAGS) -o lib_restaurante.so $(OBJS_lib_restaurante)	
 mesasTable.so:$(OBJS_mesasTable)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o mesasTable.so lib_restaurante.c $(OBJS_mesasTable)
-	
-#chan.so:$(OBJS_chan)
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o chan.so $(OBJS_chan)
-
-#chanTable.so:$(OBJS_chanTable)
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o chanTable.so $(OBJS_chanTable)
-
 
 install:
 	mkdir -p $(ROOTFS_DIR)/lib/snmp/dlmod/

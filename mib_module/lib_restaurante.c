@@ -27,7 +27,7 @@ void get_mesas_info(struct mesa_info *mesas) {
     char app_path[120] = APP_PYTHON_PATH;
     char buffer[20];
     char *r;
-	strcat(app_path, "-t");
+	strcat(app_path, "-s");
 	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
 	if (!output) {
 		syslog (LOG_INFO,"incorrect parameters or too many files.\n");

@@ -64,14 +64,14 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 	::= {mesasEntry 1}
 	
 	capacidadeMesa OBJECT-TYPE
-		SYNTAX INTEGER(1..20)
+		SYNTAX Integer32 (1..2147483647)
 		MAX-ACCESS read-only
 		STATUS mandatory
 		DESCRIPTION "Numero maximo de clientes na mesa"
 	::= {mesasEntry 2}
 
 	numClientes OBJECT-TYPE
-		SYNTAX INTEGER(1..20)
+		SYNTAX Integer32 (1..2147483647)
 		MAX-ACCESS read-only
 		STATUS mandatory
 		DESCRIPTION "Numero clientes atualmente na mesa"

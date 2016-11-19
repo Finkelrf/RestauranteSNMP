@@ -41,19 +41,26 @@ def getOccupiedTables():
 					d[table_number].append(num_people)
 					d[table_number].append(getTableCapacity(table_number))
 					d[table_number].append(OCUPADA)
-		f.seek(0)
+	return d
+		
+def getFreeTablesStatus(d):
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE) as f:
 		for line in f:
 			if 'status_' in line:
 				table_number = line.strip().split('=')[0].split('_')[1]
 				status = line.strip().split('=')[1]
 				if table_number not in d:
 					d[table_number] = []
-					d[table_number].append(num_people)
+					d[table_number].append('0')
 					d[table_number].append(getTableCapacity(table_number))
 				if status == "livre":
 					d[table_number].append(LIVRE)
 				else:
 					d[table_number].append(INDISPONIVEL)
+	
+def getAllTablesStatus():
+	d = getOccupiedTables()
+	getFreeTablesStatus(d)
 	return d
 
 def getTableCapacity(table_num):
@@ -102,13 +109,21 @@ def main():
 	if args.tables_occupied:
 		d = {}
 		d = getOccupiedTables()
-		#print something like 1,2,2 where <table_num>,<num clientes atualmente sentados>,<max capacidade mesa>,<status>
+		#print something like 1,2,2,1 where <table_num>,<num clientes atualmente sentados>,<max capacidade mesa>,<status>
 		for k,v in sorted(d.items()):
 			s = ""
 			for i in v:
 				s += ',' + i
 			print k + s
-	
+			
+	if args.status:
+		d = getAllTablesStatus()
+		#print something like 1,2,2,0 where <table_num>,<num clientes atualmente sentados>,<max capacidade mesa>,<status>
+		for k,v in sorted(d.items()):
+			s = ""
+			for i in v:
+				s += ',' + i
+			print k + s
 if __name__ == "__main__":
 	main()
 

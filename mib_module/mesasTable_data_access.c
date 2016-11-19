@@ -200,8 +200,8 @@ mesasTable_container_load(netsnmp_container *container)
          * mesasIndex(1)/INTEGER32/ASN_INTEGER/long(long)//l/A/w/e/R/d/h
          */
 	long   mesasIndex=1;
-	long   capacidadeMesa=1;
-	long   numClientes=1;
+	long   capacidadeMesa=0;
+	long   numClientes=0;
 	long   status=1;
 	int i=0;
 	unsigned long mesa_num;
