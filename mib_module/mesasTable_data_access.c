@@ -190,7 +190,6 @@ mesasTable_container_shutdown(netsnmp_container *container_ptr)
 int
 mesasTable_container_load(netsnmp_container *container)
 {
-	syslog(LOG_INFO, "1111");
     mesasTable_rowreq_ctx *rowreq_ctx;
     size_t                 count = 0;
 
@@ -208,7 +207,6 @@ mesasTable_container_load(netsnmp_container *container)
 	unsigned long mesa_num;
 	struct mesa_info mesas[MAX_MESAS];
 	unsigned long   number_tables;
-	syslog(LOG_INFO, "2222");
 	number_tables = get_number_tables();
 	get_mesas_info(mesas);
 	
@@ -226,9 +224,6 @@ mesasTable_container_load(netsnmp_container *container)
         /*
          * check for end of data; bail out if there is no more data
          */
-        //if( 1 )
-            //break;
-
         /*
          * TODO:352:M: |   |-> set indexes in new mesasTable rowreq context.
          * data context will be set from the param (unless NULL,
@@ -265,14 +260,14 @@ mesasTable_container_load(netsnmp_container *container)
      * numClientes(3)/INTEGER/ASN_INTEGER/long(long)//l/A/w/e/R/d/h
      */
     /** no mapping */
-    rowreq_ctx->data.numClientes = mesas[i+1].num_clientes;;
+    rowreq_ctx->data.numClientes = mesas[i+1].num_clientes;
     
     /*
      * setup/save data for status
      * status(4)/INTEGER/ASN_INTEGER/long(u_long)//l/A/w/E/r/d/h
      */
     /** no mapping */
-    rowreq_ctx->data.status = status;
+    rowreq_ctx->data.status = mesas[i+1].status;
     
         
         /*

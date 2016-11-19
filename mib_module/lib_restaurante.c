@@ -21,7 +21,6 @@ unsigned long get_number_tables() {
 }
 
 void get_mesas_info(struct mesa_info *mesas) {
-	//syslog(LOG_INFO, "1111");
 	FILE *output;
 	unsigned long   number_tables=0;
 	unsigned long   mesa_num;
@@ -30,12 +29,10 @@ void get_mesas_info(struct mesa_info *mesas) {
     char *r;
 	strcat(app_path, "-t");
 	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
-	if (!output)
-	{
+	if (!output) {
 		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
 		return EXIT_FAILURE;
 	}
-	syslog(LOG_INFO, "1111");
 	while(fgets(buffer, 100, output)) {
 		syslog(LOG_INFO, "buffer: %s", buffer);
 		r = strtok(buffer, ",");
@@ -47,11 +44,15 @@ void get_mesas_info(struct mesa_info *mesas) {
 		mesas[mesa_num].num_clientes = strtoul(r, NULL, 10);
 		r = strtok(NULL, ",");
 		mesas[mesa_num].capacidade = strtoul(r, NULL, 10);
-		syslog(LOG_INFO, "%s", r);
+		r = strtok(NULL, ",");
+		syslog(LOG_INFO, "status r = %s", r);
+		mesas[mesa_num].status = atoi(r);	
 		syslog(LOG_INFO, "mesa_num: %lu", mesa_num);
 		syslog(LOG_INFO, "num_cliente: %lu", mesas[mesa_num].num_clientes);
 		syslog(LOG_INFO, "capacidade: %lu", mesas[mesa_num].capacidade);
+		syslog(LOG_INFO, "status: %d", mesas[mesa_num].status);
 	}
+	pclose(output);
 	
 	
 }
