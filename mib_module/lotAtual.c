@@ -7,6 +7,7 @@
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 #include "lotAtual.h"
+#include "lib_restaurante.h"
 
 /** Initializes the lotAtual module */
 void
@@ -34,31 +35,29 @@ handle_lotAtual(netsnmp_mib_handler *handler,
 
     /* a instance handler also only hands us one request at a time, so
        we don't need to loop over a list of requests; we'll only get one. */
-    
-    // Modifications made by Roberto   
+	// Modifications made by Roberto   
     FILE *output;
     char app_path[120] = APP_PYTHON_PATH;
     char buffer[20];
     unsigned long cap;
     // End of modifications by Roberto	
-
+    
     switch(reqinfo->mode) {
 
         case MODE_GET:
-
-			// Modifications made by Roberto
-			strcat(app_path, "-c");
-			syslog(LOG_INFO, "app_path: %s", app_path);
-			output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
-			if (!output)
-			{
-				syslog (LOG_INFO,"incorrect parameters or too many files.\n");
-				return EXIT_FAILURE;
-			}
-			fgets(buffer, 10, output);
-			cap = strtoul(buffer, NULL, 10);
-			// End of modifications by Roberto	
-
+		// Modifications made by Roberto
+		strcat(app_path, "-c");
+		syslog(LOG_INFO, "app_path: %s", app_path);
+		output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+		if (!output)
+		{
+			syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+			return EXIT_FAILURE;
+		}
+		fgets(buffer, 10, output);
+		cap = strtoul(buffer, NULL, 10);
+		pclose(output);
+		// End of modifications by Roberto	
             snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER,&cap, sizeof(cap));
             break;
 

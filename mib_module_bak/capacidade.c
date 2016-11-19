@@ -7,7 +7,6 @@
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 #include "capacidade.h"
-#include "lib_restaurante.h"
 #include <syslog.h>
 #include <string.h>
 

@@ -5,8 +5,6 @@
 #ifndef CAPACIDADE_H
 #define CAPACIDADE_H
 
-#define APP_PYTHON_PATH "python /home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/restaurante.py "
-
 /* function declarations */
 void init_capacidade(void);
 Netsnmp_Node_Handler handle_capacidade;

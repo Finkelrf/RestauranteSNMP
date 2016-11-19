@@ -1,9 +1,9 @@
-CFLAGS=-O2 -Wall -g -fPIC -shared -DDEVICE_NAME=\"Aligera\ AG800\" 
-LDFLAGS= -lm -lnetsnmp -lnetsnmpagent -lnetsnmphelpers -lnetsnmpmibs -Wl,--rpath,/usr/local/lib
+CFLAGS=-O2 -Wall -g -fPIC -shared -DDEVICE_NAME=\"Aligera\ AG800\" -I/home/rocordoni/Documentos/gerencia/RestauranteSNMP/mib_module
+LDFLAGS= -L/home/rocordoni/Documentos/gerencia/RestauranteSNMP/mib_module -lm -lnetsnmp -lnetsnmpagent -lnetsnmphelpers -lnetsnmpmibs -Wl,--rpath,/usr/local/lib
 
 OBJS_capacidade=capacidade.o
 OBJS_lotAtual=lotAtual.o
-OBJS_lib_restaurante=lib_restaurante.o
+#OBJS_lib_restaurante=lib_restaurante.o
 
 OBJS_mesasTable=mesasTable.o \
 	mesasTable_interface.o \
@@ -31,14 +31,14 @@ capacidade.so: $(OBJS_capacidade)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o capacidade.so $(OBJS_capacidade)
 lotAtual.so: $(OBJS_lotAtual)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o lotAtual.so $(OBJS_lotAtual)
-lib_restaurante.so: $(OBJS_lib_restaurante)	
-	$(CC) $(CFLAGS) $(LDFLAGS) -o lib_restaurante.so $(OBJS_lib_restaurante)
+#lib_restaurante.so: $(OBJS_lib_restaurante)	
+#	$(CC) $(CFLAGS) $(LDFLAGS) -o lib_restaurante.so $(OBJS_lib_restaurante)
 	
 #e1.so:$(OBJS_e1)
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o e1.so $(OBJS_e1)
 	
 mesasTable.so:$(OBJS_mesasTable)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o mesasTable.so lib_restaurante.c $(OBJS_mesasTable)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o mesasTable.so $(OBJS_mesasTable)
 	
 #chan.so:$(OBJS_chan)
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o chan.so $(OBJS_chan)
