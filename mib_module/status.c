@@ -7,6 +7,7 @@
 #include <net-snmp/net-snmp-includes.h>
 #include <net-snmp/agent/net-snmp-agent-includes.h>
 #include "status.h"
+#include "lib_restaurante.h"
 
 /** Initializes the status module */
 void
@@ -29,7 +30,8 @@ handle_status(netsnmp_mib_handler *handler,
                           netsnmp_agent_request_info   *reqinfo,
                           netsnmp_request_info         *requests)
 {
-    int ret=0;
+    int ret=getRestStatus();
+    
     /* We are never called for a GETNEXT if it's registered as a
        "instance", as it's "magically" handled for us.  */
 
@@ -57,10 +59,6 @@ handle_status(netsnmp_mib_handler *handler,
             break;
 
         case MODE_SET_RESERVE2:
-            ///* XXX malloc "undo" storage buffer */
-            //if (/* XXX if malloc, or whatever, failed: */) {
-                //netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_RESOURCEUNAVAILABLE);
-            //}
             break;
 
         case MODE_SET_FREE:
@@ -70,26 +68,14 @@ handle_status(netsnmp_mib_handler *handler,
             break;
 
         case MODE_SET_ACTION:
-            /* XXX: perform the value change here */
-            //if (/* XXX: error? */) {
-                //netsnmp_set_request_error(reqinfo, requests, /* some error */);
-            //}
+            //syslog(LOG_INFO, "--- %d", *requests->requestvb->val.integer);
+            setRestStatus(*requests->requestvb->val.integer);
             break;
 
         case MODE_SET_COMMIT:
-            /* XXX: delete temporary storage */
-            //if (/* XXX: error? */) {
-                ///* try _really_really_ hard to never get to this point */
-                //netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_COMMITFAILED);
-            //}
             break;
 
         case MODE_SET_UNDO:
-            /* XXX: UNDO and return to previous value for the object */
-            //if (/* XXX: error? */) {
-                ///* try _really_really_ hard to never get to this point */
-                //netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_UNDOFAILED);
-            //}
             break;
 
         default:

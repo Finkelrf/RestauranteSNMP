@@ -12,6 +12,7 @@ tables_capacity_list = ['4p', '2p']
 CONFIG_PATH = "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/config/"
 MESAS_CONFIG_FILE = "mesas.conf"
 PEDIDOS_CONFIG_FILE = "pedidos.conf"
+FUNCIONARIOS_CONFIG_FILE = "funcionarios.conf"
 
 def getCurrentCapacity():
 	count = 0
@@ -110,6 +111,20 @@ def getPedidos():
 				status = PRONTO
 			print table_number + ',' + item + ',' + status
 
+def getNumFunc():
+	count = 0;
+	with open(CONFIG_PATH + FUNCIONARIOS_CONFIG_FILE) as f:
+		for line in f:
+			num = line.strip().split('=')[1]
+			count += int(num)
+	return count
+
+def getFuncInfo():
+	with open(CONFIG_PATH + FUNCIONARIOS_CONFIG_FILE) as f:
+		for line in f:
+			print line.strip()
+
+	
 def setPedido(arg_list):
 	table_num = arg_list[0]
 	item = arg_list[1]
@@ -123,14 +138,16 @@ def main():
 	#~ The argparse generates the software usage automatically
 	
 	parser = argparse.ArgumentParser(description='Controle de restaurante')
-	parser.add_argument('-c', action='store_true', dest='c',  			 				help='Obtem capacidade atual')
-	parser.add_argument('-m', action='store_true', dest='max_capacity',  				help='Obtem capacidade maxima')
-	parser.add_argument('-t', action='store_true', dest='tables_occupied',  			help='Obtem mesas ocupadas')
-	parser.add_argument('-n', action='store_true', dest='number_of_tables_occupied',	help='Obtem numero de mesas ocupadas')
-	parser.add_argument('-s', action='store_true', dest='status',  						help='Obtem status de todas as mesas')
-	parser.add_argument('-np',action='store_true', dest='num_pedidos',  				help='Obtem numero total de pedidos')
-	parser.add_argument('-p', action='store_true', dest='pedido',  						help='Obtem pedidos de todas as mesas')
-	parser.add_argument('-a', nargs=2, type=str, metavar=('MESA', 'ITEM'), 				help='Cria pedido do item ITEM para a mesa MESA')
+	parser.add_argument('-c', action='store_true', dest='c',  			 					help='Obtem capacidade atual')
+	parser.add_argument('-m', action='store_true', dest='max_capacity',  					help='Obtem capacidade maxima')
+	parser.add_argument('-t', action='store_true', dest='tables_occupied',  				help='Obtem mesas ocupadas')
+	parser.add_argument('-n', action='store_true', dest='number_of_tables_occupied',		help='Obtem numero de mesas ocupadas')
+	parser.add_argument('-s', action='store_true', dest='status',  							help='Obtem status de todas as mesas')
+	parser.add_argument('-np',action='store_true', dest='num_pedidos',  					help='Obtem numero total de pedidos')
+	parser.add_argument('-p', action='store_true', dest='pedido',  							help='Obtem pedidos de todas as mesas')
+	parser.add_argument('-f', action='store_true', dest='num_func',  						help='Obtem numero de funcionarios')
+	parser.add_argument('-fi', action='store_true', dest='func_info',  						help='Obtem info de funcionarios')
+	parser.add_argument('-a', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
 	args = parser.parse_args()
 	
 	if args.c:
@@ -161,7 +178,11 @@ def main():
 	if args.pedido:
 		#print something like 1,2,pronto where <table_num>,<item>,<status pedido>
 		getPedidos()
-	if args.a:
+	if args.num_func:
+		print getNumFunc()
+	if args.func_info:
+		 getFuncInfo()
+	if args.addOrder:
 		setPedido(args.a)
 		
 		

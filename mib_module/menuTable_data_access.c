@@ -205,7 +205,7 @@ menuTable_container_load(netsnmp_container *container)
 	int description_len = sizeof(description);
 	char path[500];
 	strncpy(path, CONFIG_PATH, sizeof(path));
-	strncat(path,"/config/menu.conf",sizeof(path));
+	strncat(path,"/menu.conf",sizeof(path));
 	f = fopen(path, "r");
 
     /*

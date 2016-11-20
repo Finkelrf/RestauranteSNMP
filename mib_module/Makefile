@@ -3,6 +3,8 @@ LDFLAGS= -lm -lnetsnmp -lnetsnmpagent -lnetsnmphelpers -lnetsnmpmibs -Wl,--rpath
 
 OBJS_capacidade=capacidade.o
 OBJS_lotAtual=lotAtual.o
+OBJS_numFunc=numFunc.o
+OBJS_status=status.o
 OBJS_lib_restaurante=lib_restaurante.o
 
 OBJS_mesasTable=mesasTable.o \
@@ -23,7 +25,7 @@ OBJS_menuTable=menuTable.o \
 	menuTable_data_get.o \
 	menuTable_data_set.o \
 
-all: capacidade.so lotAtual.so mesasTable.so ordersTable.so menuTable.so
+all: capacidade.so lotAtual.so numFunc.so status.so mesasTable.so ordersTable.so menuTable.so
 
 clean:
 	rm -vf *.o *.so 
@@ -32,6 +34,10 @@ capacidade.so: $(OBJS_capacidade)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o capacidade.so $(OBJS_capacidade)
 lotAtual.so: $(OBJS_lotAtual)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o lotAtual.so $(OBJS_lotAtual)
+numFunc.so: $(OBJS_numFunc)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o numFunc.so lib_restaurante.c $(OBJS_numFunc)
+status.so: $(OBJS_status)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o status.so lib_restaurante.c $(OBJS_status)
 lib_restaurante.so: $(OBJS_lib_restaurante)	
 	$(CC) $(CFLAGS) $(LDFLAGS) -o lib_restaurante.so $(OBJS_lib_restaurante)	
 mesasTable.so:$(OBJS_mesasTable)

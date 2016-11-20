@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "lib_restaurante.h"
 
 unsigned long get_number_tables() {
@@ -103,4 +104,65 @@ void get_orders_info(struct order_info *orders) {
 		syslog(LOG_INFO, "Status: %d", status);
 		i++;
 	}
+	pclose(output);
 }
+
+unsigned long getNumFunc() {
+    FILE *output;
+    char app_path[120] = APP_PYTHON_PATH;
+    char buffer[20];
+    unsigned long num_func;
+    strcat(app_path, "-f");
+	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+	if (!output) {
+		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+		return EXIT_FAILURE;
+	}
+	fgets(buffer, 10, output);
+	num_func = strtoul(buffer, NULL, 10);
+	pclose(output);
+	return num_func;
+
+}
+
+int getRestStatus() {
+	FILE *f;
+    char app_path[120] = APP_PYTHON_PATH;
+    char buffer[20];
+    int status;
+    char *r;
+    char path[500];
+	strncpy(path, CONFIG_PATH, sizeof(path));
+	strncat(path,"/rest.conf",sizeof(path));
+	f = fopen(path, "r");
+	if (!f) {
+		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+		return EXIT_FAILURE;
+	}
+	fgets(buffer, 10, f);
+	r = strtok(buffer, "=");
+	r = strtok(NULL, "=");
+	status = atoi(r);
+	fclose(f);
+	return status;
+}
+
+int setRestStatus(int status) {
+	FILE *f;
+    char app_path[120] = APP_PYTHON_PATH;
+    char buffer[20];
+    char path[500];
+	strncpy(path, CONFIG_PATH, sizeof(path));
+	strncat(path,"/rest.conf",sizeof(path));
+	syslog(LOG_INFO, "%s", path);
+	f = fopen(path, "r+");
+	if (!f) {
+		syslog (LOG_INFO,"errno: %s", strerror(errno));
+		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+		return EXIT_FAILURE;
+	}
+	fprintf(f, "status=%d",status); 
+	fclose(f);
+	return status;
+}
+

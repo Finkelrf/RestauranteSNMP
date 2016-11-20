@@ -4,7 +4,7 @@
 #define MAX_MESAS 20
 #define MAX_ORDERS 100
 #define APP_PYTHON_PATH "python /home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/restaurante.py "
-#define CONFIG_PATH "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/"
+#define CONFIG_PATH "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/config"
 
 struct mesa_info {
 	unsigned long capacidade;
@@ -24,4 +24,10 @@ void get_mesas_info(struct mesa_info *mesas);
 
 unsigned long get_number_orders();
 void get_orders_info(struct order_info *orders);
+
+int getRestStatus();
+int setRestStatus(int status);
+
+
+
 
