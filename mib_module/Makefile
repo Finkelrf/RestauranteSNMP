@@ -17,7 +17,13 @@ OBJS_ordersTable=ordersTable.o \
 	ordersTable_data_get.o \
 	ordersTable_data_set.o \
 
-all: capacidade.so lotAtual.so mesasTable.so ordersTable.so
+OBJS_menuTable=menuTable.o \
+	menuTable_interface.o \
+	menuTable_data_access.o \
+	menuTable_data_get.o \
+	menuTable_data_set.o \
+
+all: capacidade.so lotAtual.so mesasTable.so ordersTable.so menuTable.so
 
 clean:
 	rm -vf *.o *.so 
@@ -32,6 +38,8 @@ mesasTable.so:$(OBJS_mesasTable)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o mesasTable.so lib_restaurante.c $(OBJS_mesasTable)
 ordersTable.so:$(OBJS_ordersTable)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o ordersTable.so lib_restaurante.c $(OBJS_ordersTable)
+menuTable.so:$(OBJS_menuTable)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o menuTable.so lib_restaurante.c $(OBJS_menuTable)
 
 install:
 	mkdir -p $(ROOTFS_DIR)/lib/snmp/dlmod/

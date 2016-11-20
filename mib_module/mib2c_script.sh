@@ -8,7 +8,8 @@ export MIBDIRS
 #echo env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf lotAtual
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf lotAtual
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf mesasTable
-env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf ordersTable
+#env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf ordersTable
+env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf menuTable
 #env MIBS="+ALIGERA-MIB" mib2c -c mib2c.notify.conf e1Traps
 
 #$MIBDIRS MIBS="+ALIGERA-MIB" mib2c -c mib2c.scalar.conf chan

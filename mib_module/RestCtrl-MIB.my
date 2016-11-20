@@ -137,6 +137,42 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		DESCRIPTION "Status atual do pedido"
 	::= {ordersEntry 4}
 
+--
+-- Cardapio (Menu) Table
+--
+	menuTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF MenuEntry
+		MAX-ACCESS not-accessible
+		STATUS current
+		DESCRIPTION "Tabela contendo os items do menu disponiveis"
+	::= {restCtrl 5}
+
+	menuEntry OBJECT-TYPE
+		SYNTAX MenuEntry
+		MAX-ACCESS not-accessible
+		STATUS current
+		DESCRIPTION "Entrada de um item no cardapio" 
+		INDEX { menuIndex }
+	::= {menuTable 1}
+
+	MenuEntry ::=	SEQUENCE {
+		menuIndex		Integer32,
+		description		DisplayString
+	}
+	
+	menuIndex OBJECT-TYPE
+		SYNTAX Integer32 (1..2147483647)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION " The value of this object uniquely identifies this Entry."
+	::= {menuEntry 1}
+	
+	description OBJECT-TYPE
+		SYNTAX DisplayString
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Descricao do item"
+	::= {menuEntry 2}
 	
 	
 END

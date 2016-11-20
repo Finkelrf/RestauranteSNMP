@@ -130,7 +130,7 @@ def main():
 	parser.add_argument('-s', action='store_true', dest='status',  						help='Obtem status de todas as mesas')
 	parser.add_argument('-np',action='store_true', dest='num_pedidos',  				help='Obtem numero total de pedidos')
 	parser.add_argument('-p', action='store_true', dest='pedido',  						help='Obtem pedidos de todas as mesas')
-	parser.add_argument('-a', nargs=2, type=str, metavar=('MESA', 'ITEM'), help='Cria pedido do item ITEM para a mesa MESA')
+	parser.add_argument('-a', nargs=2, type=str, metavar=('MESA', 'ITEM'), 				help='Cria pedido do item ITEM para a mesa MESA')
 	args = parser.parse_args()
 	
 	if args.c:

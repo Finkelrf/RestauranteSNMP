@@ -1,8 +1,10 @@
 #include <syslog.h>
+#include <unistd.h>
 
 #define MAX_MESAS 20
 #define MAX_ORDERS 100
 #define APP_PYTHON_PATH "python /home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/restaurante.py "
+#define CONFIG_PATH "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/"
 
 struct mesa_info {
 	unsigned long capacidade;
