@@ -51,8 +51,8 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 
 	MesasEntry ::=	SEQUENCE {
 		mesasIndex			Integer32,
-		capacidadeMesa 		COUNTER32,
-		numClientes 		COUNTER32,
+		capacidadeMesa 		Integer32,
+		numClientes 		Integer32,
 		status				INTEGER
 	}
 
@@ -104,8 +104,8 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 
 	OrdersEntry ::=	SEQUENCE {
 		ordersIndex		Integer32,
-		item 			COUNTER32,
-		table 			COUNTER32,
+		item 			Integer32,
+		table 			Integer32,
 		status			INTEGER
 	}
 	
@@ -131,7 +131,7 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 	::= {ordersEntry 3}
 
 	status OBJECT-TYPE
-		SYNTAX INTEGER{ encaminhadoParaCozinha(0), EmPreparo(1), Pronto(2)}
+		SYNTAX INTEGER{ encaminhadoParaCozinha(0), emPreparo(1), pronto(2)}
 		MAX-ACCESS read-only
 		STATUS mandatory
 		DESCRIPTION "Status atual do pedido"
