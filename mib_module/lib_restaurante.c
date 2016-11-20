@@ -53,6 +53,54 @@ void get_mesas_info(struct mesa_info *mesas) {
 		syslog(LOG_INFO, "status: %d", mesas[mesa_num].status);
 	}
 	pclose(output);
-	
-	
+}
+
+unsigned long get_number_orders() {
+	FILE *output;
+	unsigned long   number_orders=0;
+    char app_path[120] = APP_PYTHON_PATH;
+    char buffer[20];
+	strcat(app_path, "-np");
+	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+	if (!output) {
+		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+		return EXIT_FAILURE;
+	}
+	fgets(buffer, 10, output);
+	number_orders = strtoul(buffer, NULL, 10);
+	pclose(output);
+	return number_orders;
+}
+
+void get_orders_info(struct order_info *orders) {
+	FILE *output;
+	unsigned long   number_tables=0;
+	unsigned long   mesa_num, item;
+    char app_path[120] = APP_PYTHON_PATH;
+    char buffer[20];
+    char *r;
+    int i, status;
+	strcat(app_path, "-p");
+	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+	if (!output) {
+		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+		return EXIT_FAILURE;
+	}
+	i = 0;
+	while(fgets(buffer, 100, output)) {
+		syslog(LOG_INFO, "buffer: %s", buffer);
+		r = strtok(buffer, ",");
+		mesa_num = strtoul(r, NULL, 10);
+		r = strtok(NULL, ",");
+		item = strtoul(r, NULL, 10);
+		r = strtok(NULL, ",");
+		status = atoi(r);
+		orders[i].table = mesa_num;
+		orders[i].item = item;
+		orders[i].status = status;
+		syslog(LOG_INFO, "Table: %lu", mesa_num);
+		syslog(LOG_INFO, "item: %lu", item);
+		syslog(LOG_INFO, "Status: %d", status);
+		i++;
+	}
 }

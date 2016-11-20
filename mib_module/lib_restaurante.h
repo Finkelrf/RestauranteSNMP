@@ -1,6 +1,7 @@
 #include <syslog.h>
 
 #define MAX_MESAS 20
+#define MAX_ORDERS 100
 #define APP_PYTHON_PATH "python /home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/restaurante.py "
 
 struct mesa_info {
@@ -9,5 +10,16 @@ struct mesa_info {
 	int status;
 };
 
+struct order_info {
+	unsigned long item;
+	unsigned long table;
+	int status;
+	
+};
+
 unsigned long get_number_tables();
 void get_mesas_info(struct mesa_info *mesas);
+
+unsigned long get_number_orders();
+void get_orders_info(struct order_info *orders);
+

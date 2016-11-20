@@ -37,7 +37,7 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		SYNTAX SEQUENCE OF MesasEntry
 		MAX-ACCESS not-accessible
 		STATUS current
-		DESCRIPTION "Numero atual de pessoas no restaurante"
+		DESCRIPTION "Tabela contendo as informacoes das mesas"
 	::= {restCtrl 3}
 
 	mesasEntry OBJECT-TYPE
@@ -84,8 +84,58 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		DESCRIPTION "Status atual da mesa"
 	::= {mesasEntry 4}
 
+--
+-- Tabela de pedidos
+--
+	ordersTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF OrdersEntry
+		MAX-ACCESS not-accessible
+		STATUS current
+		DESCRIPTION "Tabela contendo informacoes dos pedidos feitos"
+	::= {restCtrl 4}
 
+	ordersEntry OBJECT-TYPE
+		SYNTAX OrdersEntry
+		MAX-ACCESS not-accessible
+		STATUS current
+		DESCRIPTION "Info sobre pedidos" 
+		INDEX { ordersIndex }
+	::= {ordersTable 1}
+
+	OrdersEntry ::=	SEQUENCE {
+		ordersIndex		Integer32,
+		item 			COUNTER32,
+		table 			COUNTER32,
+		status			INTEGER
+	}
 	
+	ordersIndex OBJECT-TYPE
+		SYNTAX Integer32 (1..2147483647)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION " The value of this object uniquely identifies this Entry."
+	::= {ordersEntry 1}
+	
+	item OBJECT-TYPE
+		SYNTAX Integer32 (1..2147483647)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Item do cardapio pedido"
+	::= {ordersEntry 2}
+
+	table OBJECT-TYPE
+		SYNTAX Integer32 (1..2147483647)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Numera da mesa que fez o pedido"
+	::= {ordersEntry 3}
+
+	status OBJECT-TYPE
+		SYNTAX INTEGER{ encaminhadoParaCozinha(0), EmPreparo(1), Pronto(2)}
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Status atual do pedido"
+	::= {ordersEntry 4}
 
 	
 	
