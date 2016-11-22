@@ -92,7 +92,7 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 	::= {mesasEntry 3}
 
 	status OBJECT-TYPE
-		SYNTAX INTEGER{ livre(0), ocupada(1), indisponivel(2)}
+		SYNTAX INTEGER{ livre(0), ocupada(1), reservada(2), indisponivel(3)}
 		MAX-ACCESS read-only
 		STATUS mandatory
 		DESCRIPTION "Status atual da mesa"
