@@ -1,0 +1,7 @@
+INSTRUCTIONS:
+
+	-- Install pyqt
+	$ sudo apt-get install python-qt4
+
+	--Run gerente.py
+	$ python gerenteMain.py
