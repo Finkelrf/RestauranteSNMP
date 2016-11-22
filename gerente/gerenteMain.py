@@ -6,7 +6,10 @@ from PyQt4 import QtGui
 from SnmpComm import *
 
 class Window(QtGui.QWidget):
-    BUTTON_IMAGE = 'table.png'
+    BUTTON_IMAGE_FREE = 'table-green.png'
+    BUTTON_IMAGE_OCUPY = 'table-red.png'
+    BUTTON_IMAGE_RESERVED = 'table-blue.png'
+    BUTTON_IMAGE_UNAVAILABLE= 'table-black.png'
 
     def __init__(self):
         super(Window, self).__init__()
@@ -18,6 +21,7 @@ class Window(QtGui.QWidget):
         vbox = QtGui.QVBoxLayout()
         gridNorth = QtGui.QGridLayout()
         gridSouth = QtGui.QGridLayout()
+        gridSouth.setContentsMargins(10,10,10,10)
         self.setLayout(vbox)
         vbox.addLayout(gridNorth)
         vbox.addLayout(gridSouth)
@@ -31,11 +35,11 @@ class Window(QtGui.QWidget):
 
 
         #formating tableMap
-        tableWidth = 52
-        tableheight = 52
-        tableSpace = 10
+        tableWidth = 56
+        tableheight = 56
+        tableSpace = 20
 
-        tablesPerLine = int(self.width/(tableWidth+tableSpace))
+        tablesPerLine = int(self.width/(tableWidth+tableSpace+tableSpace))
         print "tablesPerLine "+str(tablesPerLine)
         i = 0
         j = 0
@@ -45,8 +49,16 @@ class Window(QtGui.QWidget):
             #create images and start event handlers
             self.tableButton.append(ExtendedQLabel.ExtendedQLabel(self))
             self.tableButton[counter].setId(counter)
-            self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE))
-            self.tableButton[counter].setScaledContents(True)
+            tableStatus = SnmpComm.getTableStatus(counter)
+            if tableStatus == TableStatusEnum.Free:
+                self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_FREE))
+            elif tableStatus == TableStatusEnum.Ocupy:
+                self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_OCUPY))
+            elif tableStatus == TableStatusEnum.Reserved:
+                self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_RESERVED))
+            elif tableStatus == TableStatusEnum.Unavailable:
+                self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_UNAVAILABLE))
+            self.tableButton[counter].setScaledContents(False)
             self.connect(self.tableButton[counter], SIGNAL('clicked()'), self.buttonClicked)
             self.connect(self.tableButton[counter], SIGNAL('scroll(int)'), self.wheelScrolled)
             #add the created imageButton to the grid
@@ -58,7 +70,6 @@ class Window(QtGui.QWidget):
                 j = j+1
             else:
                 i = i+1
-
 
 
         self.show()

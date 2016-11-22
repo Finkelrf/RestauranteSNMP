@@ -1,3 +1,6 @@
+from random import randint
+
+
 class SnmpComm(object):
 
 	@staticmethod
@@ -8,3 +11,11 @@ class SnmpComm(object):
 			return "30"
 		else:
 			return "var not found"
+
+	@staticmethod
+	def getTableStatus(tableId):
+		return randint(0,3)
+
+
+class TableStatusEnum:
+	Free,Ocupy,Reserved,Unavailable = range(4)
