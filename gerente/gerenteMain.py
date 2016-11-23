@@ -4,6 +4,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from PyQt4 import QtGui
 from SnmpComm import *
+from TablePopup import *
 
 class Window(QtGui.QWidget):
     BUTTON_IMAGE_FREE = 'table-green.png'
@@ -32,6 +33,7 @@ class Window(QtGui.QWidget):
         gridNorth.addWidget(title,1,1)
         lotCapLabel = QLabel(lotAtual+"/"+capacidade)
         gridNorth.addWidget(lotCapLabel,2,2)
+
 
 
         #formating tableMap
@@ -80,8 +82,14 @@ class Window(QtGui.QWidget):
         sys.exit()
 
     def buttonClicked(self):
-        n = self.sender().id
-        print('Button {0} Clicked'.format(n))
+        tableId = self.sender().id
+        print('Button {0} Clicked'.format(tableId))
+        print "Opening a new popup window..."
+        self.tablePopup = TablePopup(tableId)
+        self.tablePopup.setGeometry(QRect(100, 100, 400, 200))
+        self.tablePopup.setWindowTitle("Table "+str(tableId)+" configuration")
+        self.tablePopup.show()
+
 
     def wheelScrolled(self, scrollAmount):
         scrollAmount /= 10
