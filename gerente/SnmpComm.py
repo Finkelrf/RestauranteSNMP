@@ -21,6 +21,11 @@ class SnmpComm(object):
 		table = Table(tableId,9,9,TableStatusEnum.Ocupy)
 		return table
 
+	@staticmethod
+	def setTable(tableObj):
+		#change tableObj on agente
+		print "Updating table"
+
 
 class TableStatusEnum:
 	Free,Ocupy,Reserved,Unavailable = range(4)

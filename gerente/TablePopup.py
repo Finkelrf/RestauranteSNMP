@@ -27,9 +27,9 @@ class TablePopup(QWidget):
 		idTextLabel.setFont(font)
 		idTextLabel.setAlignment(QtCore.Qt.AlignCenter)
 
-		idInfoLabel = QLabel(str(tableId))
-		idInfoLabel.setFont(font)
-		idInfoLabel.setAlignment(QtCore.Qt.AlignCenter)
+		self.idInfoLabel = QLabel(str(tableId))
+		self.idInfoLabel.setFont(font)
+		self.idInfoLabel.setAlignment(QtCore.Qt.AlignCenter)
 
 		#Capacity
 		capacityTextLabel = QLabel("Capacity: ")
@@ -37,10 +37,10 @@ class TablePopup(QWidget):
 		capacityTextLabel.setAlignment(QtCore.Qt.AlignCenter)
 
 		capacity = SnmpComm.getTable(tableId).capacity
-		capacityTextEdit = QTextEdit(str(capacity))
-		capacityTextEdit.setFont(font)
-		capacityTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
-		capacityTextEdit.setMinimumSize(100,30)
+		self.capacityTextEdit = QTextEdit(str(capacity))
+		self.capacityTextEdit.setFont(font)
+		self.capacityTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
+		self.capacityTextEdit.setMinimumSize(100,30)
 
 		#Clients
 		clientsTextLabel = QLabel("Clients: ")
@@ -48,10 +48,10 @@ class TablePopup(QWidget):
 		clientsTextLabel.setAlignment(QtCore.Qt.AlignCenter)
 
 		clients = SnmpComm.getTable(tableId).clients
-		clientsTextEdit = QTextEdit(str(clients))
-		clientsTextEdit.setFont(font)
-		clientsTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
-		clientsTextEdit.setMinimumSize(100,30)
+		self.clientsTextEdit = QTextEdit(str(clients))
+		self.clientsTextEdit.setFont(font)
+		self.clientsTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
+		self.clientsTextEdit.setMinimumSize(100,30)
 
 		#Status
 		statusTextLabel = QLabel("Status: ")
@@ -59,10 +59,10 @@ class TablePopup(QWidget):
 		statusTextLabel.setAlignment(QtCore.Qt.AlignCenter)
 
 		statusStr = SnmpComm.getTable(tableId).getStatusStr()
-		statusTextEdit = QTextEdit(statusStr)
-		statusTextEdit.setFont(font)
-		statusTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
-		statusTextEdit.setMinimumSize(100,30)
+		self.statusTextEdit = QTextEdit(statusStr)
+		self.statusTextEdit.setFont(font)
+		self.statusTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
+		self.statusTextEdit.setMinimumSize(100,30)
 
 		#buttons
 		self.btnApply = QPushButton("Apply")
@@ -80,20 +80,36 @@ class TablePopup(QWidget):
 
 
 		layoutGrid.addWidget(idTextLabel,1,1)
-		layoutGrid.addWidget(idInfoLabel,1,2)
+		layoutGrid.addWidget(self.idInfoLabel,1,2)
 		layoutGrid.addWidget(capacityTextLabel,2,1)
-		layoutGrid.addWidget(capacityTextEdit,2,2)
+		layoutGrid.addWidget(self.capacityTextEdit,2,2)
 		layoutGrid.addWidget(clientsTextLabel,3,1)
-		layoutGrid.addWidget(clientsTextEdit,3,2)
+		layoutGrid.addWidget(self.clientsTextEdit,3,2)
 		layoutGrid.addWidget(statusTextLabel,4,1)
-		layoutGrid.addWidget(statusTextEdit,4,2)
+		layoutGrid.addWidget(self.statusTextEdit,4,2)
 
 
 
 	def handleButton(self,function):
 		if function == "apply":
+			#TODO Fix status fazer barrinha com opcoes
+			tableId = self.idInfoLabel.text()
+			tableCapacity = self.capacityTextEdit.toPlainText()
+			tableClients = self.clientsTextEdit.toPlainText()
+			tableObj = Table(tableId,tableCapacity,tableClients,0)
+			print str(tableId)+' '+str(tableCapacity)+' '+str(tableClients)
+			SnmpComm.setTable(tableObj)
 			print "Apply"
+			self.close()
 		elif function == "refresh":
+			tableObj = SnmpComm.getTable(self.idInfoLabel.text())
+			self.capacityTextEdit.setText(str(tableObj.capacity))
+			self.capacityTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
+			self.clientsTextEdit.setText(str(tableObj.clients))
+			self.clientsTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
+			statusStr = tableObj.getStatusStr()
+			self.statusTextEdit.setText(statusStr)
+			self.statusTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
 			print "refresh"
 		elif function == "cancel":
 			print "cancel"
