@@ -1,8 +1,9 @@
 from random import randint
-
+import subprocess 
 
 class SnmpComm(object):
-
+	MIBDIRS = "/lib/mibs:/usr/share/mibs/ietf:/usr/share/mibs/netsnmp:/usr/share/snmp/mibs/"
+	IPADDR = "localhost"
 	@staticmethod
 	def getSnmpVar(variableName):
 		if variableName == "lotAtual":
@@ -25,6 +26,11 @@ class SnmpComm(object):
 	def setTable(tableObj):
 		#change tableObj on agente
 		print "Updating table"
+
+	@staticmethod
+	def _executeCmd(cmd):
+		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+		return proc.stdout.read()
 
 
 class TableStatusEnum:

@@ -11,28 +11,36 @@ class Window(QtGui.QWidget):
     BUTTON_IMAGE_OCUPY = 'table-red.png'
     BUTTON_IMAGE_RESERVED = 'table-blue.png'
     BUTTON_IMAGE_UNAVAILABLE= 'table-black.png'
+    tablePopup = None
 
     def __init__(self):
         super(Window, self).__init__()
         self.width = 800
-        self.height = 600
+        self.height = 300
         self.setGeometry(50, 50, self.width, self.height)
         self.setWindowTitle("Restaurant management")
 
         vbox = QtGui.QVBoxLayout()
-        gridNorth = QtGui.QGridLayout()
+        northLayout = QtGui.QHBoxLayout()
         gridSouth = QtGui.QGridLayout()
         gridSouth.setContentsMargins(10,10,10,10)
         self.setLayout(vbox)
-        vbox.addLayout(gridNorth)
+        vbox.addLayout(northLayout)
         vbox.addLayout(gridSouth)
 
+        font = QtGui.QFont("Helvetica")
+        font.setPointSize(30)
+        font.setBold(True)
+
         title = QLabel("Restaurant Management")
+        title.setFont(font)
         lotAtual = SnmpComm.getSnmpVar("lotAtual")
         capacidade = SnmpComm.getSnmpVar("capacidade")
-        gridNorth.addWidget(title,1,1)
+        northLayout.addWidget(title)
         lotCapLabel = QLabel(lotAtual+"/"+capacidade)
-        gridNorth.addWidget(lotCapLabel,2,2)
+        lotCapLabel.setFont(font)
+        lotCapLabel.setAlignment(QtCore.Qt.AlignRight)
+        northLayout.addWidget(lotCapLabel)
 
 
 
@@ -84,11 +92,20 @@ class Window(QtGui.QWidget):
     def buttonClicked(self):
         tableId = self.sender().id
         print('Button {0} Clicked'.format(tableId))
+        if self.tablePopup is None:
+            #cria objeto no primeiro acesso
+            self.tablePopup = TablePopup(tableId)
+        if self.tablePopup.apearing == True:
+            print "fechando popup que tava aberta"
+            self.tablePopup.close()
         print "Opening a new popup window..."
         self.tablePopup = TablePopup(tableId)
         self.tablePopup.setGeometry(QRect(100, 100, 400, 200))
         self.tablePopup.setWindowTitle("Table "+str(tableId)+" configuration")
+        self.tablePopup.apearing = True
         self.tablePopup.show()
+        
+
 
 
     def wheelScrolled(self, scrollAmount):

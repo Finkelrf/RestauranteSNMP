@@ -4,6 +4,7 @@ from PyQt4 import QtCore
 from SnmpComm import *
 
 class TablePopup(QWidget):
+	apearing = False
 	def __init__(self,tableId):
 		QWidget.__init__(self)
 		layout = QVBoxLayout()
@@ -40,7 +41,7 @@ class TablePopup(QWidget):
 		self.capacityTextEdit = QTextEdit(str(capacity))
 		self.capacityTextEdit.setFont(font)
 		self.capacityTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
-		self.capacityTextEdit.setMinimumSize(100,30)
+		self.capacityTextEdit.setMinimumSize(100,63)
 
 		#Clients
 		clientsTextLabel = QLabel("Clients: ")
@@ -51,7 +52,7 @@ class TablePopup(QWidget):
 		self.clientsTextEdit = QTextEdit(str(clients))
 		self.clientsTextEdit.setFont(font)
 		self.clientsTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
-		self.clientsTextEdit.setMinimumSize(100,30)
+		self.clientsTextEdit.setMinimumSize(100,63)
 
 		#Status
 		statusTextLabel = QLabel("Status: ")
@@ -59,10 +60,12 @@ class TablePopup(QWidget):
 		statusTextLabel.setAlignment(QtCore.Qt.AlignCenter)
 
 		statusStr = SnmpComm.getTable(tableId).getStatusStr()
-		self.statusTextEdit = QTextEdit(statusStr)
-		self.statusTextEdit.setFont(font)
-		self.statusTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
-		self.statusTextEdit.setMinimumSize(100,30)
+		self.statusComboBox = QtGui.QComboBox(self)
+		self.statusComboBox.setFont(font)
+		self.statusComboBox.addItem("Free")
+		self.statusComboBox.addItem("Taken")
+		self.statusComboBox.addItem("Reserved")
+		self.statusComboBox.addItem("Unavailable")		
 
 		#buttons
 		self.btnApply = QPushButton("Apply")
@@ -86,7 +89,7 @@ class TablePopup(QWidget):
 		layoutGrid.addWidget(clientsTextLabel,3,1)
 		layoutGrid.addWidget(self.clientsTextEdit,3,2)
 		layoutGrid.addWidget(statusTextLabel,4,1)
-		layoutGrid.addWidget(self.statusTextEdit,4,2)
+		layoutGrid.addWidget(self.statusComboBox,4,2)
 
 
 
@@ -116,4 +119,9 @@ class TablePopup(QWidget):
 			self.close()
 		else:
 			print "Unknown button"
+
+	def closeEvent(self,event):
+		print("Closing Popup")
+		self.apearing = False
+		event.accept()
 
