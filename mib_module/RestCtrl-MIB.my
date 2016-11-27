@@ -188,5 +188,51 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		DESCRIPTION "Descricao do item"
 	::= {menuEntry 2}
 	
+--
+-- Estoque Table
+--
+	estoqueTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF EstoqueEntry
+		MAX-ACCESS not-accessible
+		STATUS current
+		DESCRIPTION "Tabela contendo os items do estoque disponiveis"
+	::= {restCtrl 9}
+
+	estoqueEntry OBJECT-TYPE
+		SYNTAX EstoqueEntry
+		MAX-ACCESS not-accessible
+		STATUS current
+		DESCRIPTION "Entrada de um item no cardapio" 
+		INDEX { estoqueIndex }
+	::= {estoqueTable 1}
+
+	EstoqueEntry ::=	SEQUENCE {
+		estoqueIndex		Integer32,
+		name				DisplayString,
+		amount				Integer32
+	}
+	
+	estoqueIndex OBJECT-TYPE
+		SYNTAX Integer32
+		MAX-ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION " The value of this object uniquely identifies this Entry."
+	::= {estoqueEntry 1}
+	
+	name OBJECT-TYPE
+		SYNTAX DisplayString
+		MAX-ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION "Descricao do item"
+	::= {estoqueEntry 2}
+	
+	amount OBJECT-TYPE
+		SYNTAX Integer32
+		MAX-ACCESS read-write
+		STATUS mandatory
+		DESCRIPTION "Quantidade ainda disponivel, em kg"
+	::= {estoqueEntry 3}
+
+	
 	
 END

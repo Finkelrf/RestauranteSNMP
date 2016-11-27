@@ -1,7 +1,10 @@
 #include <syslog.h>
 #include <unistd.h>
 
+#define BUFF_SIZE 20
+#define MAX_SIZE 100
 #define MAX_MESAS 20
+#define MAX_ESTOQUE 100
 #define MAX_ORDERS 100
 #define APP_PYTHON_PATH "python /home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/restaurante.py "
 #define CONFIG_PATH "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/config"
@@ -17,6 +20,11 @@ struct order_info {
 	unsigned long table;
 	int status;
 	
+};
+
+struct estoque_item_info {
+	unsigned long item_name[BUFF_SIZE];
+	unsigned long amount;	
 };
 
 unsigned long get_number_tables();

@@ -68,7 +68,7 @@ handle_status(netsnmp_mib_handler *handler,
             break;
 
         case MODE_SET_ACTION:
-            //syslog(LOG_INFO, "--- %d", *requests->requestvb->val.integer);
+            syslog(LOG_INFO, "--- %d", *requests->requestvb->val.integer);
             setRestStatus(*requests->requestvb->val.integer);
             break;
 

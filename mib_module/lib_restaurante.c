@@ -166,3 +166,45 @@ int setRestStatus(int status) {
 	return status;
 }
 
+int getNumItemsEstoque() {
+	FILE *output;
+    char app_path[MAX_SIZE] = APP_PYTHON_PATH;
+    char buffer[BUFF_SIZE];
+    unsigned long num_items;
+    strcat(app_path, "-ne");
+	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+	if (!output) {
+		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+		return EXIT_FAILURE;
+	}
+	fgets(buffer, BUFF_SIZE, output);
+	num_items = strtoul(buffer, NULL, 10);
+	pclose(output);
+	return num_items;
+}
+
+void getEstoque(struct estoque_item_info *estoque) {
+	FILE *output;
+	int i=0;
+	unsigned long num_items=0;
+    char app_path[MAX_SIZE] = APP_PYTHON_PATH;
+    char buffer[BUFF_SIZE];
+    char *r;
+	strcat(app_path, "-e");
+	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+	if (!output) {
+		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+		return EXIT_FAILURE;
+	}
+	while(fgets(buffer, BUFF_SIZE, output)) {
+		r = strtok(buffer, ",");
+		strncpy(estoque[i].item_name, r, BUFF_SIZE);
+		r = strtok(NULL, ",");
+		estoque[i].amount = strtoul(r, NULL, 10);
+		syslog(LOG_INFO, "item_name: %s", estoque[i].item_name);
+		syslog(LOG_INFO, "amount: %lu", estoque[i].amount );
+		i++;
+	}
+	pclose(output);
+}
+

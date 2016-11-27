@@ -13,6 +13,7 @@ CONFIG_PATH = "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_a
 MESAS_CONFIG_FILE = "mesas.conf"
 PEDIDOS_CONFIG_FILE = "pedidos.conf"
 FUNCIONARIOS_CONFIG_FILE = "funcionarios.conf"
+ESTOQUE_CONFIG_FILE = "estoque.conf"
 
 def getCurrentCapacity():
 	count = 0
@@ -124,14 +125,24 @@ def getFuncInfo():
 		for line in f:
 			print line.strip()
 
-	
 def setPedido(arg_list):
 	table_num = arg_list[0]
 	item = arg_list[1]
 	#Open file as "a", to append text at the end of the file
 	with open(CONFIG_PATH + PEDIDOS_CONFIG_FILE, "a") as f:
 		f.write(table_num + "," + item + ",encaminhado")
-			
+
+def getNumItemsEstoque():
+	count = 0
+	with open(CONFIG_PATH + ESTOQUE_CONFIG_FILE) as f:
+		for line in f:
+			count += 1
+	return count
+	
+def getEstoqueInfo():
+	with open(CONFIG_PATH + ESTOQUE_CONFIG_FILE) as f:
+		for line in f:
+			print line.strip()
 		
 def main():
 	
@@ -147,6 +158,8 @@ def main():
 	parser.add_argument('-p', action='store_true', dest='pedido',  							help='Obtem pedidos de todas as mesas')
 	parser.add_argument('-f', action='store_true', dest='num_func',  						help='Obtem numero de funcionarios')
 	parser.add_argument('-fi', action='store_true', dest='func_info',  						help='Obtem info de funcionarios')
+	parser.add_argument('-ne', action='store_true', dest='num_items_estoque',  				help='Obtem numero de items no estoque')
+	parser.add_argument('-e', action='store_true', dest='estoque_info',  					help='Obtem info do estoque')
 	parser.add_argument('-a', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
 	args = parser.parse_args()
 	
@@ -184,6 +197,10 @@ def main():
 		 getFuncInfo()
 	if args.addOrder:
 		setPedido(args.a)
+	if args.num_items_estoque:
+		print getNumItemsEstoque()
+	if args.estoque_info:
+		getEstoqueInfo()
 		
 		
 			

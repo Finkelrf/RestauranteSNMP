@@ -1,4 +1,4 @@
-CFLAGS=-O2 -Wall -g -fPIC -shared -DDEVICE_NAME=\"Aligera\ AG800\" 
+CFLAGS=-O2 -Wall -g -fPIC -shared -DDEVICE_NAME=\"Restaurante\ Ctrl\" 
 LDFLAGS= -lm -lnetsnmp -lnetsnmpagent -lnetsnmphelpers -lnetsnmpmibs -Wl,--rpath,/usr/local/lib
 
 OBJS_capacidade=capacidade.o
@@ -24,8 +24,14 @@ OBJS_menuTable=menuTable.o \
 	menuTable_data_access.o \
 	menuTable_data_get.o \
 	menuTable_data_set.o \
+	
+OBJS_estoqueTable=estoqueTable.o \
+	estoqueTable_interface.o \
+	estoqueTable_data_access.o \
+	estoqueTable_data_get.o \
+	estoqueTable_data_set.o \
 
-all: capacidade.so lotAtual.so numFunc.so status.so mesasTable.so ordersTable.so menuTable.so
+all: capacidade.so lotAtual.so numFunc.so status.so mesasTable.so ordersTable.so menuTable.so estoqueTable.so
 
 clean:
 	rm -vf *.o *.so 
@@ -46,6 +52,8 @@ ordersTable.so:$(OBJS_ordersTable)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o ordersTable.so lib_restaurante.c $(OBJS_ordersTable)
 menuTable.so:$(OBJS_menuTable)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o menuTable.so lib_restaurante.c $(OBJS_menuTable)
+estoqueTable.so:$(OBJS_estoqueTable)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o estoqueTable.so lib_restaurante.c $(OBJS_estoqueTable)
 
 install:
 	mkdir -p $(ROOTFS_DIR)/lib/snmp/dlmod/
