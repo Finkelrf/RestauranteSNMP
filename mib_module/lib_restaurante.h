@@ -27,6 +27,13 @@ struct estoque_item_info {
 	unsigned long amount;	
 };
 
+struct daily_orders_info {
+	unsigned long year;
+	unsigned long month;	
+	unsigned long day;
+	unsigned long orders;
+};
+
 unsigned long get_number_tables();
 void get_mesas_info(struct mesa_info *mesas);
 
@@ -35,6 +42,12 @@ void get_orders_info(struct order_info *orders);
 
 int getRestStatus();
 int setRestStatus(int status);
+
+int getNumItemsEstoque();
+void getEstoque(struct estoque_item_info *estoque);
+
+int getNumDailyOrdersEntries();
+void getDailyOrdersInfo(struct daily_orders_info *info);
 
 
 

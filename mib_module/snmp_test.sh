@@ -11,7 +11,8 @@ IPADDR=localhost
 #snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB mesasTable
 #snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB ordersTable
 #snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB menuTable
-snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB estoqueTable
+#snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB estoqueTable
+snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB dailyOrdersTable
 #~ echo snmpget $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB capacidade.0
 #snmpget $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB capacidade.0
 #snmpget $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB lotAtual.0

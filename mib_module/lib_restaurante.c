@@ -186,7 +186,6 @@ int getNumItemsEstoque() {
 void getEstoque(struct estoque_item_info *estoque) {
 	FILE *output;
 	int i=0;
-	unsigned long num_items=0;
     char app_path[MAX_SIZE] = APP_PYTHON_PATH;
     char buffer[BUFF_SIZE];
     char *r;
@@ -201,10 +200,58 @@ void getEstoque(struct estoque_item_info *estoque) {
 		strncpy(estoque[i].item_name, r, BUFF_SIZE);
 		r = strtok(NULL, ",");
 		estoque[i].amount = strtoul(r, NULL, 10);
-		syslog(LOG_INFO, "item_name: %s", estoque[i].item_name);
-		syslog(LOG_INFO, "amount: %lu", estoque[i].amount );
+		//syslog(LOG_INFO, "item_name: %s", estoque[i].item_name);
+		//syslog(LOG_INFO, "amount: %lu", estoque[i].amount );
 		i++;
 	}
 	pclose(output);
 }
+
+int getNumDailyOrdersEntries() {
+	FILE *output;
+    char app_path[MAX_SIZE] = APP_PYTHON_PATH;
+    char buffer[BUFF_SIZE];
+    unsigned long num_entries;
+    strcat(app_path, "-nd");
+	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+	if (!output) {
+		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+		return EXIT_FAILURE;
+	}
+	fgets(buffer, BUFF_SIZE, output);
+	num_entries = strtoul(buffer, NULL, 10);
+	pclose(output);
+	return num_entries;
+}
+
+void getDailyOrdersInfo(struct daily_orders_info *info) {
+	FILE *output;
+	int i=0;
+    char app_path[MAX_SIZE] = APP_PYTHON_PATH;
+    char buffer[BUFF_SIZE];
+    char *r;
+	strcat(app_path, "-d");
+	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+	if (!output) {
+		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
+		return EXIT_FAILURE;
+	}
+	while(fgets(buffer, BUFF_SIZE, output)) {
+		r = strtok(buffer, ",");
+		info[i].year = strtoul(r, NULL, 10);
+		r = strtok(NULL, ",");
+		info[i].month = strtoul(r, NULL, 10);
+		r = strtok(NULL, ",");
+		info[i].day = strtoul(r, NULL, 10);
+		r = strtok(NULL, ",");
+		info[i].orders = strtoul(r, NULL, 10);
+		syslog(LOG_INFO, "year: %lu", info[i].year);
+		syslog(LOG_INFO, "month: %lu", info[i].month);
+		syslog(LOG_INFO, "day: %lu", info[i].day);
+		syslog(LOG_INFO, "orders: %lu", info[i].orders);
+		i++;
+	}
+	pclose(output);
+}
+
 

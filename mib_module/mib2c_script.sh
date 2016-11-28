@@ -11,7 +11,8 @@ export MIBDIRS
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf status
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf mesasTable
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf ordersTable
-env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf estoqueTable
+#env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf estoqueTable
+env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf dailyOrdersTable
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf menuTable
 #env MIBS="+ALIGERA-MIB" mib2c -c mib2c.notify.conf e1Traps
 

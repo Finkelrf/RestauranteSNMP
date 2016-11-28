@@ -45,8 +45,71 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		DESCRIPTION "Status do restaurante"
 	::= {restCtrl 7}
 
-	
+--
+-- Tabela de Ordens diarias
+--
+	dailyOrdersTable OBJECT-TYPE
+		SYNTAX SEQUENCE OF DailyOrdersTableEntry
+		MAX-ACCESS not-accessible
+		STATUS current
+		DESCRIPTION "Numero de pedidos em um certo dia"
+	::= {restCtrl 8}
 
+	dailyOrdersEntry OBJECT-TYPE
+		SYNTAX DailyOrdersEntry
+		MAX-ACCESS not-accessible
+		STATUS current
+		DESCRIPTION "Info sobre dailyOrders" 
+		INDEX { dailyOrdersIndex }
+	::= {dailyOrdersTable 1}
+
+
+	DailyOrdersEntry ::=	SEQUENCE {
+		dailyOrdersIndex	Integer32,
+		year			 	Integer32,
+		month		 		Integer32,
+		day					Integer32,
+		orders				Integer32
+	}
+
+	dailyOrdersIndex OBJECT-TYPE
+		SYNTAX Integer32 (1..2147483647)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION " The value of this object uniquely identifies this Entry."
+	::= {dailyOrdersEntry 1}
+	
+	year OBJECT-TYPE
+		SYNTAX Integer32 (1..2147483647)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Ano"
+	::= {dailyOrdersEntry 2}
+
+	month OBJECT-TYPE
+		SYNTAX Integer32 (1..2147483647)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Mes"
+	::= {dailyOrdersEntry 3}
+
+	day OBJECT-TYPE
+		SYNTAX Integer32 (1..2147483647)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "dia"
+	::= {dailyOrdersEntry 4}
+	
+	orders OBJECT-TYPE
+		SYNTAX Integer32 (1..2147483647)
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Numero de pedidos do dia"
+	::= {dailyOrdersEntry 5}
+
+--
+-- Tabela de mesas
+--
 	mesasTable OBJECT-TYPE
 		SYNTAX SEQUENCE OF MesasEntry
 		MAX-ACCESS not-accessible
@@ -232,7 +295,6 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		STATUS mandatory
 		DESCRIPTION "Quantidade ainda disponivel, em kg"
 	::= {estoqueEntry 3}
-
 	
 	
 END

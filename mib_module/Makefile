@@ -30,8 +30,14 @@ OBJS_estoqueTable=estoqueTable.o \
 	estoqueTable_data_access.o \
 	estoqueTable_data_get.o \
 	estoqueTable_data_set.o \
+	
+OBJS_dailyOrdersTable=dailyOrdersTable.o \
+	dailyOrdersTable_interface.o \
+	dailyOrdersTable_data_access.o \
+	dailyOrdersTable_data_get.o \
+	dailyOrdersTable_data_set.o \
 
-all: capacidade.so lotAtual.so numFunc.so status.so mesasTable.so ordersTable.so menuTable.so estoqueTable.so
+all: capacidade.so lotAtual.so numFunc.so status.so mesasTable.so ordersTable.so menuTable.so estoqueTable.so dailyOrdersTable.so
 
 clean:
 	rm -vf *.o *.so 
@@ -54,6 +60,8 @@ menuTable.so:$(OBJS_menuTable)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o menuTable.so lib_restaurante.c $(OBJS_menuTable)
 estoqueTable.so:$(OBJS_estoqueTable)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o estoqueTable.so lib_restaurante.c $(OBJS_estoqueTable)
+dailyOrdersTable.so:$(OBJS_dailyOrdersTable)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o dailyOrdersTable.so lib_restaurante.c $(OBJS_dailyOrdersTable)
 
 install:
 	mkdir -p $(ROOTFS_DIR)/lib/snmp/dlmod/
