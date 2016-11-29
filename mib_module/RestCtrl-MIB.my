@@ -37,7 +37,7 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		STATUS mandatory
 		DESCRIPTION "Numero de fucnionarios do restaurante"
 	::= {restCtrl 6}
-	
+		
 	status OBJECT-TYPE
 		SYNTAX INTEGER { aberto(0), fechado(1)}
 		MAX-ACCESS read-write
@@ -46,7 +46,7 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 	::= {restCtrl 7}
 
 --
--- Tabela de Ordens diarias
+-- Tabela de Pedidos diarios
 --
 	dailyOrdersTable OBJECT-TYPE
 		SYNTAX SEQUENCE OF DailyOrdersTableEntry
@@ -295,6 +295,17 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		STATUS mandatory
 		DESCRIPTION "Quantidade ainda disponivel, em kg"
 	::= {estoqueEntry 3}
+	
+--
+-- Numero atual de pedidos no restaurante
+--
+	currNumOrders OBJECT-TYPE
+		SYNTAX Counter32
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Numero de pedidos atualmente do restaurante"
+	::= {restCtrl 10}
+
 	
 	
 END

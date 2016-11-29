@@ -5,6 +5,7 @@ OBJS_capacidade=capacidade.o
 OBJS_lotAtual=lotAtual.o
 OBJS_numFunc=numFunc.o
 OBJS_status=status.o
+OBJS_currNumOrders=currNumOrders.o
 OBJS_lib_restaurante=lib_restaurante.o
 
 OBJS_mesasTable=mesasTable.o \
@@ -37,7 +38,7 @@ OBJS_dailyOrdersTable=dailyOrdersTable.o \
 	dailyOrdersTable_data_get.o \
 	dailyOrdersTable_data_set.o \
 
-all: capacidade.so lotAtual.so numFunc.so status.so mesasTable.so ordersTable.so menuTable.so estoqueTable.so dailyOrdersTable.so
+all: capacidade.so lotAtual.so numFunc.so status.so currNumOrders.so mesasTable.so ordersTable.so menuTable.so estoqueTable.so dailyOrdersTable.so
 
 clean:
 	rm -vf *.o *.so 
@@ -50,6 +51,8 @@ numFunc.so: $(OBJS_numFunc)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o numFunc.so lib_restaurante.c $(OBJS_numFunc)
 status.so: $(OBJS_status)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o status.so lib_restaurante.c $(OBJS_status)
+currNumOrders.so: $(OBJS_currNumOrders)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o currNumOrders.so lib_restaurante.c $(OBJS_currNumOrders)
 lib_restaurante.so: $(OBJS_lib_restaurante)	
 	$(CC) $(CFLAGS) $(LDFLAGS) -o lib_restaurante.so $(OBJS_lib_restaurante)	
 mesasTable.so:$(OBJS_mesasTable)

@@ -15,6 +15,7 @@ PEDIDOS_CONFIG_FILE = "pedidos.conf"
 FUNCIONARIOS_CONFIG_FILE = "funcionarios.conf"
 ESTOQUE_CONFIG_FILE = "estoque.conf"
 DAILY_ORDERS_CONFIG_FILE = "pedidos_diarios.conf"
+CURR_ORDERS_CONFIG_FILE = "pedidos_atual.conf"
 
 def getCurrentCapacity():
 	count = 0
@@ -156,6 +157,11 @@ def getDailyOrdersInfo():
 	with open(CONFIG_PATH + DAILY_ORDERS_CONFIG_FILE) as f:
 		for line in f:
 			print line.strip()
+			
+def getCurrOrders():
+	with open(CONFIG_PATH + CURR_ORDERS_CONFIG_FILE) as f:
+		return f.read().strip()
+	
 		
 def main():
 	
@@ -175,6 +181,7 @@ def main():
 	parser.add_argument('-e', action='store_true', dest='estoque_info',  					help='Obtem info do estoque')
 	parser.add_argument('-nd', action='store_true', dest='num_daily_orders',  				help='Obtem numero de pedidos no arquivo')
 	parser.add_argument('-d', action='store_true', dest='daily_orders_info',  				help='Obtem info do numero de pedidos diarios')
+	parser.add_argument('-o', action='store_true', dest='curr_orders',  					help='Obtem numero de pedidos atual')
 	parser.add_argument('-a', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
 	args = parser.parse_args()
 	
@@ -218,6 +225,8 @@ def main():
 		getEstoqueInfo()
 	if args.num_daily_orders:
 		print getDailyOrdersEntries()
+	if args.curr_orders:
+		print getCurrOrders()
 	if args.daily_orders_info:
 		getDailyOrdersInfo()
 		
