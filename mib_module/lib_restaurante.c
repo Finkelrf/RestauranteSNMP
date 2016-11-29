@@ -4,13 +4,22 @@
 #include <errno.h>
 #include "lib_restaurante.h"
 
+/*
+ * get_number_tables()
+ * 
+ * Retorno: number_tables (unsignd long). 
+ * 
+ * Essa funcao eh responsavel por obter o numero total de mesas do restaurante.
+ * Esse valor eh obtido utilizando um aplicativo auxiliar. Esse software eh invocado 
+ * atraves da rotina popen().
+ * */
 unsigned long get_number_tables() {
 	FILE *output;
 	unsigned long   number_tables=0;
-    char app_path[120] = APP_PYTHON_PATH;
+    char app_path[120] = APP_PYTHON_PATH;	//Caminho para executar o software auxiliar
     char buffer[20];
-	strcat(app_path, "-n");
-	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+	strcat(app_path, "-n");					// Concatena na string o argumento necessario para o software auxiliar
+	output = popen (app_path, "r"); 		// Faz a chamada ao aplicativo, e analisa o resultado
 	if (!output) {
 		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
 		return EXIT_FAILURE;
@@ -21,12 +30,26 @@ unsigned long get_number_tables() {
 	return number_tables;
 }
 
+/*
+ * get_mesas_info(struct mesa_info *mesas)
+ * 
+ * Retorno: void. 
+ * 
+ * Essa funcao eh responsavel por obter informacoes sobre as mesas do restaurante. 
+ * As informacoes sao: numero da mesa, numero de clientes atualmente sentados nesta mesa, 
+ * a capacidade total dela e tambem o status (livre, ocupada, indisponivel ou reservada).
+ * As informacoes obtidas sao armazenadas em um ponteiro para um um array da estrutura mesa_info,
+ * passado como argumento para essa funcao.
+ * 
+ * Esses valore sao obtidos utilizando um aplicativo auxiliar. Esse software eh invocado 
+ * atraves da rotina popen().
+ * */
 void get_mesas_info(struct mesa_info *mesas) {
 	FILE *output;
 	unsigned long   number_tables=0;
 	unsigned long   mesa_num;
     char app_path[120] = APP_PYTHON_PATH;
-    char buffer[20];
+    char buffer[BUFF_SIZE];
     char *r;
 	strcat(app_path, "-s");
 	output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
@@ -34,24 +57,15 @@ void get_mesas_info(struct mesa_info *mesas) {
 		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
 		return EXIT_FAILURE;
 	}
-	while(fgets(buffer, 100, output)) {
-		syslog(LOG_INFO, "buffer: %s", buffer);
+	while(fgets(buffer, BUFF_SIZE, output)) {
 		r = strtok(buffer, ",");
-		syslog(LOG_INFO, "r= %s", r);
 		mesa_num = strtoul(r, NULL, 10);
-		syslog(LOG_INFO, "444");
-		syslog(LOG_INFO, "%s", r);
 		r = strtok(NULL, ",");
 		mesas[mesa_num].num_clientes = strtoul(r, NULL, 10);
 		r = strtok(NULL, ",");
 		mesas[mesa_num].capacidade = strtoul(r, NULL, 10);
 		r = strtok(NULL, ",");
-		syslog(LOG_INFO, "status r = %s", r);
 		mesas[mesa_num].status = atoi(r);	
-		syslog(LOG_INFO, "mesa_num: %lu", mesa_num);
-		syslog(LOG_INFO, "num_cliente: %lu", mesas[mesa_num].num_clientes);
-		syslog(LOG_INFO, "capacidade: %lu", mesas[mesa_num].capacidade);
-		syslog(LOG_INFO, "status: %d", mesas[mesa_num].status);
 	}
 	pclose(output);
 }
