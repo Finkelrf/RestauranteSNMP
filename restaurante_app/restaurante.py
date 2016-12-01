@@ -16,6 +16,7 @@ FUNCIONARIOS_CONFIG_FILE = "funcionarios.conf"
 ESTOQUE_CONFIG_FILE = "estoque.conf"
 DAILY_ORDERS_CONFIG_FILE = "pedidos_diarios.conf"
 CURR_ORDERS_CONFIG_FILE = "pedidos_atual.conf"
+REST_CONFIG_FILE = "rest.conf"
 
 def getCurrentCapacity():
 	count = 0
@@ -113,6 +114,17 @@ def getPedidos():
 			else:
 				status = PRONTO
 			print table_number + ',' + item + ',' + status
+			
+def getStatus():
+	with open(CONFIG_PATH + REST_CONFIG_FILE) as f:
+		for line in f:
+			if "status=" in line:
+				return line.strip().split('=')[1]
+				
+def setStatus(new_status):
+	with open(CONFIG_PATH + REST_CONFIG_FILE, 'w') as f:
+		pass
+		f.write("status=" + new_status[0])
 
 def getNumFunc():
 	count = 0;
@@ -175,6 +187,8 @@ def main():
 	parser.add_argument('-s', action='store_true', dest='status',  							help='Obtem status de todas as mesas')
 	parser.add_argument('-np',action='store_true', dest='num_pedidos',  					help='Obtem numero total de pedidos')
 	parser.add_argument('-p', action='store_true', dest='pedido',  							help='Obtem pedidos de todas as mesas')
+	parser.add_argument('-gs', action='store_true', dest='get_status',  					help='Obtem status do restaurante (aberto/fechado)')
+	parser.add_argument('-ss', nargs=1, type=str, metavar='STATUS', dest='set_status',  	help='Modifica o status do restaurante')
 	parser.add_argument('-f', action='store_true', dest='num_func',  						help='Obtem numero de funcionarios')
 	parser.add_argument('-fi', action='store_true', dest='func_info',  						help='Obtem info de funcionarios')
 	parser.add_argument('-ne', action='store_true', dest='num_items_estoque',  				help='Obtem numero de items no estoque')
@@ -213,6 +227,10 @@ def main():
 	if args.pedido:
 		#print something like 1,2,pronto where <table_num>,<item>,<status pedido>
 		getPedidos()
+	if args.get_status:
+		print getStatus()
+	if args.set_status:
+		setStatus(args.set_status)
 	if args.num_func:
 		print getNumFunc()
 	if args.func_info:
