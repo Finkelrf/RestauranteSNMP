@@ -33,19 +33,19 @@ class Window(QtGui.QWidget):
         self.changeableLayout = QtGui.QVBoxLayout()
         
 
-        font = QtGui.QFont("Helvetica")
-        font.setPointSize(30)
-        font.setBold(True)
+        self.font = QtGui.QFont("Helvetica")
+        self.font.setPointSize(30)
+        self.font.setBold(True)
 
         titleLabel = QLabel("Restaurant Management")
-        titleLabel.setFont(font)
+        titleLabel.setFont(self.font)
         self.setFixedWidgetSize(titleLabel,100,100)
         self.lotAtual = SnmpComm.getSnmpVar("lotAtual")
         self.capacidade = SnmpComm.getSnmpVar("capacidade")
         northLayout.addWidget(titleLabel)
         lotCapLabel = QLabel(self.lotAtual+"/"+self.capacidade)
         self.setFixedWidgetSize(lotCapLabel,100,100)
-        lotCapLabel.setFont(font)
+        lotCapLabel.setFont(self.font)
         lotCapLabel.setAlignment(QtCore.Qt.AlignRight)
         northLayout.addWidget(lotCapLabel)
 
@@ -87,7 +87,67 @@ class Window(QtGui.QWidget):
         if newCapacidade != self.capacidade or newLotAtual != self.lotAtual:
             self.showTablesFunction()
 
-        
+    def showMenuFunction(self):
+        self.clearLayout(self.changeableLayout)
+        outerLayout = QVBoxLayout()
+        self.changeableLayout.addLayout(outerLayout)
+
+        #labels 
+        labelsLayout = QHBoxLayout()
+
+        codLabel = QLabel("Code")
+        codLabel.setAlignment(QtCore.Qt.AlignCenter)
+        nameLabel = QLabel("Name")
+        nameLabel.setAlignment(QtCore.Qt.AlignCenter)
+        descLabel = QLabel("Description")
+        descLabel.setAlignment(QtCore.Qt.AlignCenter)
+        labelsLayout.addWidget(codLabel)
+        labelsLayout.addWidget(nameLabel)
+        labelsLayout.addWidget(descLabel)
+        outerLayout.addLayout(labelsLayout)
+
+        #scroll area
+        self.scrollArea = QtGui.QScrollArea(self)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 380, 247))
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        outerLayout.addWidget(self.scrollArea)
+
+
+        #info grid
+        menuInfoGrid = QGridLayout(self.scrollAreaWidgetContents)
+        outerLayout.addLayout(menuInfoGrid)
+        cod = []
+        name = []
+        desc = []
+        cod.append(QLabel("Code"))
+        cod[0].setAlignment(QtCore.Qt.AlignCenter)
+        name.append(QLabel("Name"))
+        name[0].setAlignment(QtCore.Qt.AlignCenter)
+        desc.append(QLabel("Description"))
+        desc[0].setAlignment(QtCore.Qt.AlignCenter)
+        menuInfoGrid.addWidget(cod[0],0,0)
+        menuInfoGrid.addWidget(name[0],0,1)
+        menuInfoGrid.addWidget(desc[0],0,2)
+
+        arrayOfValues = []
+        listSize,arrayOfValues = SnmpComm.walk("menuTable")
+
+        for i in range(1,listSize+1):
+            cod.append(QLabel("Code"))
+            cod[i].setAlignment(QtCore.Qt.AlignCenter)
+            name.append(QLabel("Name"))
+            name[i].setAlignment(QtCore.Qt.AlignCenter)
+            desc.append(QLabel("Description"))
+            desc[i].setAlignment(QtCore.Qt.AlignCenter)
+            menuInfoGrid.addWidget(cod[i],i,0)
+            menuInfoGrid.addWidget(name[i],i,1)
+            menuInfoGrid.addWidget(desc[i],i,2)
+
+
+
+
     def showTablesFunction(self):
         self.clearLayout(self.changeableLayout)
         tablesGrid = QtGui.QGridLayout()
@@ -151,9 +211,7 @@ class Window(QtGui.QWidget):
         if function is "tables":
             self.showTablesFunction()
         elif function is "menu":
-            self.clearLayout(self.changeableLayout)
-            self.changeableLayout.addWidget(QPushButton("oba oba"))
-            print "lerere"
+            self.showMenuFunction()
         elif function is "orders":
             print "orders"
 

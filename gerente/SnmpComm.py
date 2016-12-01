@@ -33,6 +33,27 @@ class SnmpComm(object):
 		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 		return proc.stdout.read()
 
+	@staticmethod
+	def walk(OID):
+		#Return numberOfObjects,arrayOfValues.
+		print "SnmpCommWalk "+OID
+		arrayOfValues = []
+		numberOfObjects = 50
+		return numberOfObjects,arrayOfValues
+	@staticmethod
+	def get(OID):
+		#Return value of requested OID
+		value = 5 #dummy value for examples
+		return value
+
+	@staticmethod
+	def set(OID,inputValue):
+		#Return value of requested OID
+		value = 5 #dummy value for examples
+		return value
+
+
+
 
 class TableStatusEnum:
 	Free,Occupied,Reserved,Unavailable = range(4)
