@@ -49,7 +49,7 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 -- Tabela de Pedidos diarios
 --
 	dailyOrdersTable OBJECT-TYPE
-		SYNTAX SEQUENCE OF DailyOrdersTableEntry
+		SYNTAX SEQUENCE OF DailyOrdersEntry
 		MAX-ACCESS not-accessible
 		STATUS current
 		DESCRIPTION "Numero de pedidos em um certo dia"
