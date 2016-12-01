@@ -63,7 +63,7 @@ class TablePopup(QWidget):
 		self.statusComboBox = QtGui.QComboBox(self)
 		self.statusComboBox.setFont(font)
 		self.statusComboBox.addItem("Free")
-		self.statusComboBox.addItem("Taken")
+		self.statusComboBox.addItem("Occupied")
 		self.statusComboBox.addItem("Reserved")
 		self.statusComboBox.addItem("Unavailable")		
 
@@ -111,9 +111,11 @@ class TablePopup(QWidget):
 			self.clientsTextEdit.setText(str(tableObj.clients))
 			self.clientsTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
 			statusStr = tableObj.getStatusStr()
-			self.statusTextEdit.setText(statusStr)
-			self.statusTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
-			print "refresh"
+			index = self.statusComboBox.findText(statusStr)
+			if index >= 0:
+				self.statusComboBox.setCurrentIndex(index)
+			print "status str: "+statusStr
+			print "index: "+str(index)
 		elif function == "cancel":
 			print "cancel"
 			self.close()

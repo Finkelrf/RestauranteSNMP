@@ -19,13 +19,14 @@ class SnmpComm(object):
 
 	@staticmethod
 	def getTable(tableId):
-		table = Table(tableId,9,9,TableStatusEnum.Ocupy)
+		table = Table(tableId,9,9,TableStatusEnum.Occupied)
+		print "SnmpComm refreshing table OBJ"
 		return table
 
 	@staticmethod
 	def setTable(tableObj):
 		#change tableObj on agente
-		print "Updating table"
+		print "SnmpComm Updating table OBJ"
 
 	@staticmethod
 	def _executeCmd(cmd):
@@ -34,7 +35,7 @@ class SnmpComm(object):
 
 
 class TableStatusEnum:
-	Free,Ocupy,Reserved,Unavailable = range(4)
+	Free,Occupied,Reserved,Unavailable = range(4)
 
 
 class Table(object):
@@ -45,5 +46,5 @@ class Table(object):
 		self.status = status
 
 	def getStatusStr(self):
-		dict = {TableStatusEnum.Free: 'Free', TableStatusEnum.Ocupy: 'Ocupy', TableStatusEnum.Reserved: 'Reserved', TableStatusEnum.Unavailable: 'Unavailable'}
+		dict = {TableStatusEnum.Free: 'Free', TableStatusEnum.Occupied: 'Occupied', TableStatusEnum.Reserved: 'Reserved', TableStatusEnum.Unavailable: 'Unavailable'}
 		return dict[self.status]

@@ -8,7 +8,7 @@ from TablePopup import *
 
 class Window(QtGui.QWidget):
     BUTTON_IMAGE_FREE = 'table-green.png'
-    BUTTON_IMAGE_OCUPY = 'table-red.png'
+    BUTTON_IMAGE_OCCUPIED = 'table-red.png'
     BUTTON_IMAGE_RESERVED = 'table-blue.png'
     BUTTON_IMAGE_UNAVAILABLE= 'table-black.png'
     tablePopup = None
@@ -20,30 +20,80 @@ class Window(QtGui.QWidget):
         self.setGeometry(50, 50, self.width, self.height)
         self.setWindowTitle("Restaurant management")
 
+        self.makeHome()
+
+        self.show()
+
+    def makeHome(self):
+        #define layouts 
         vbox = QtGui.QVBoxLayout()
         northLayout = QtGui.QHBoxLayout()
-        gridSouth = QtGui.QGridLayout()
-        gridSouth.setContentsMargins(10,10,10,10)
-        self.setLayout(vbox)
-        vbox.addLayout(northLayout)
-        vbox.addLayout(gridSouth)
+        middleLayout = QtGui.QHBoxLayout()
+        sideLayout = QtGui.QVBoxLayout()
+        self.changeableLayout = QtGui.QVBoxLayout()
+        
 
         font = QtGui.QFont("Helvetica")
         font.setPointSize(30)
         font.setBold(True)
 
-        title = QLabel("Restaurant Management")
-        title.setFont(font)
-        lotAtual = SnmpComm.getSnmpVar("lotAtual")
-        capacidade = SnmpComm.getSnmpVar("capacidade")
-        northLayout.addWidget(title)
-        lotCapLabel = QLabel(lotAtual+"/"+capacidade)
+        titleLabel = QLabel("Restaurant Management")
+        titleLabel.setFont(font)
+        self.setFixedWidgetSize(titleLabel,100,100)
+        self.lotAtual = SnmpComm.getSnmpVar("lotAtual")
+        self.capacidade = SnmpComm.getSnmpVar("capacidade")
+        northLayout.addWidget(titleLabel)
+        lotCapLabel = QLabel(self.lotAtual+"/"+self.capacidade)
+        self.setFixedWidgetSize(lotCapLabel,100,100)
         lotCapLabel.setFont(font)
         lotCapLabel.setAlignment(QtCore.Qt.AlignRight)
         northLayout.addWidget(lotCapLabel)
 
 
+        #sideLayout
+        btnTables = QPushButton("Tables")
+        btnTables.clicked.connect(lambda: self.menuButtonClicked("tables"))
+        self.setFixedWidgetSize(btnTables,100,100)
+        btnMenu = QPushButton("Menu")
+        btnMenu.clicked.connect(lambda: self.menuButtonClicked("menu"))
+        self.setFixedWidgetSize(btnMenu,100,100)
+        btnOrders = QPushButton("Orders")
+        btnOrders.clicked.connect(lambda: self.menuButtonClicked("orders"))
+        self.setFixedWidgetSize(btnOrders,100,100)
 
+        sideLayout.addWidget(btnTables)
+        sideLayout.addWidget(btnMenu)
+        sideLayout.addWidget(btnOrders)
+
+        
+        #layouts structure
+        vbox.addLayout(northLayout)
+        vbox.addLayout(middleLayout)
+        middleLayout.addLayout(sideLayout)
+        middleLayout.addLayout(self.changeableLayout)
+        self.setLayout(vbox)
+
+        self.showTablesFunction()
+
+        #check update timer
+        timer = QtCore.QTimer(self)
+        timer.timeout.connect(self.updateInfo)
+        timer.start(1000)
+
+    def updateInfo(self):
+        #check if any table has changed function
+        newLotAtual = SnmpComm.getSnmpVar("lotAtual")
+        newCapacidade = SnmpComm.getSnmpVar("capacidade")
+        if newCapacidade != self.capacidade or newLotAtual != self.lotAtual:
+            self.showTablesFunction()
+
+        
+    def showTablesFunction(self):
+        self.clearLayout(self.changeableLayout)
+        tablesGrid = QtGui.QGridLayout()
+        self.changeableLayout.addLayout(tablesGrid)
+
+        tablesGrid.setContentsMargins(10,10,10,10)
         #formating tableMap
         tableWidth = 56
         tableheight = 56
@@ -55,24 +105,23 @@ class Window(QtGui.QWidget):
         j = 0
         counter = 0
         self.tableButton = []
-        while counter<int(capacidade):
+        while counter<int(self.capacidade):
             #create images and start event handlers
             self.tableButton.append(ExtendedQLabel.ExtendedQLabel(self))
             self.tableButton[counter].setId(counter)
             tableStatus = SnmpComm.getTableStatus(counter)
             if tableStatus == TableStatusEnum.Free:
                 self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_FREE))
-            elif tableStatus == TableStatusEnum.Ocupy:
-                self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_OCUPY))
+            elif tableStatus == TableStatusEnum.Occupied:
+                self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_OCCUPIED))
             elif tableStatus == TableStatusEnum.Reserved:
                 self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_RESERVED))
             elif tableStatus == TableStatusEnum.Unavailable:
                 self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_UNAVAILABLE))
             self.tableButton[counter].setScaledContents(False)
             self.connect(self.tableButton[counter], SIGNAL('clicked()'), self.buttonClicked)
-            self.connect(self.tableButton[counter], SIGNAL('scroll(int)'), self.wheelScrolled)
             #add the created imageButton to the grid
-            gridSouth.addWidget(self.tableButton[counter],j,i)
+            tablesGrid.addWidget(self.tableButton[counter],j,i)
             counter = counter+1
             print str(i)+" "+str(j)
             if i > tablesPerLine:
@@ -80,14 +129,6 @@ class Window(QtGui.QWidget):
                 j = j+1
             else:
                 i = i+1
-
-
-        self.show()
-
-
-    def close_application(self):
-        print("whooaaaa so custom!!!")
-        sys.exit()
 
     def buttonClicked(self):
         tableId = self.sender().id
@@ -104,15 +145,41 @@ class Window(QtGui.QWidget):
         self.tablePopup.setWindowTitle("Table "+str(tableId)+" configuration")
         self.tablePopup.apearing = True
         self.tablePopup.show()
+
+        
+    def menuButtonClicked(self,function):
+        if function is "tables":
+            self.showTablesFunction()
+        elif function is "menu":
+            self.clearLayout(self.changeableLayout)
+            self.changeableLayout.addWidget(QPushButton("oba oba"))
+            print "lerere"
+        elif function is "orders":
+            print "orders"
+
         
 
+    def clearLayout(self, layout):
+        for i in reversed(range(layout.count())):
+            item = layout.itemAt(i)
 
+            if isinstance(item, QtGui.QWidgetItem):
+                print "widget" + str(item)
+                item.widget().close()
+                # or
+                # item.widget().setParent(None)
+            elif isinstance(item, QtGui.QSpacerItem):
+                print "spacer " + str(item)
+                # no need to do extra stuff
+            else:
+                print "layout " + str(item)
+                self.clearLayout(item.layout())
 
-    def wheelScrolled(self, scrollAmount):
-        scrollAmount /= 10
-        self.ImageButton.resize(self.ImageButton.width() + scrollAmount, self.ImageButton.height() + scrollAmount)
-        self.resize(self.ImageButton.size())
+            # remove the item from layout
+            layout.removeItem(item)    
 
+    def setFixedWidgetSize(self,widget,width,height):
+        widget.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
 
 def run():
     app = QtGui.QApplication(sys.argv)
