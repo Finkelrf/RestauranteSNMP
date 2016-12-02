@@ -1,4 +1,5 @@
 import argparse
+import subprocess
 
 LIVRE="0"
 OCUPADA="1"
@@ -174,8 +175,48 @@ def getDailyOrdersInfo():
 def getCurrOrders():
 	with open(CONFIG_PATH + CURR_ORDERS_CONFIG_FILE) as f:
 		return f.read().strip()
-	
 		
+def getNextTableId():
+	count = 0
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE) as f:
+		for line in f:
+			if "mesas_" in line:
+				count += int(line.strip().split('=')[1])
+	return count+1
+	
+def addTable(new_cap,status):
+	search_str = "mesas_" + new_cap
+	cap_dict = {}
+	dump_str = ""
+	add_str = ""
+	new_id = getNextTableId()
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE, 'r') as f:
+		f.seek(0)
+		for line in f:
+			# O arquivo de configuracao contem entradas do tipo: mesas_4p=2:
+			# Significando que existem 2 mesas com capacidade para 4 pessoas. Para atualizar a quantidade de mesas com uma certa capacidade,
+			# criamos um dicionario mapeando {capacidade-da-mesa : numero-de-mesas-com-essa-capacidade}
+			# Essa parte do codigo atualiza o numero de mesas configuradas:
+			if "mesas_" in line:
+				# Adiciona uma entrada no dicionario, fazendo um parse na linha lida, exemplo: mesas_(4p)=(2) --> {4p : 2}
+				table_cap = line.strip().split('_')[1].split('=')[0]
+				num_table_cap = line.strip().split('=')[1]
+				cap_dict[table_cap] = int(num_table_cap)
+				if new_cap == table_cap[0]:
+					cap_dict[table_cap] = int(num_table_cap) + 1
+			else:
+				dump_str += line				
+	add_str += "\nmesa_" + str(new_id) + "=0" 
+	add_str += "\ncapacidade_" + str(new_id) + "=" + new_cap
+	add_str += "\nstatus_" + str(new_id) + "=" + status
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE + ".temp", 'w') as f:
+		for key, value in cap_dict.items():
+			f.write("mesas_" + key + "=" + str(value) + '\n')
+		f.write(dump_str)
+		f.write('\n' + add_str.strip())
+	subprocess.call(['mv', CONFIG_PATH + MESAS_CONFIG_FILE + ".temp", CONFIG_PATH + MESAS_CONFIG_FILE])
+	
+			
 def main():
 	
 	#~ The argparse generates the software usage automatically
@@ -197,7 +238,8 @@ def main():
 	parser.add_argument('-nd', action='store_true', dest='num_daily_orders',  				help='Obtem numero de pedidos no arquivo')
 	parser.add_argument('-d', action='store_true', dest='daily_orders_info',  				help='Obtem info do numero de pedidos diarios')
 	parser.add_argument('-o', action='store_true', dest='curr_orders',  					help='Obtem numero de pedidos atual')
-	parser.add_argument('-a', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
+	parser.add_argument('-ao', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
+	parser.add_argument('-at', nargs=2, type=str, metavar=('CAPACIDADE', 'STATUS'), dest='addTable',		help='Insere nova mesa na configuracao do restaurante')
 	args = parser.parse_args()
 	
 	if args.c:
@@ -248,6 +290,11 @@ def main():
 		print getCurrOrders()
 	if args.daily_orders_info:
 		getDailyOrdersInfo()
+	if args.addTable:
+		if args.addTable[0]+"p" not in tables_capacity_list:
+			print "Uma mesa com capacidade "+ args.addTable[0] + " nao eh suportada"
+		else:
+			addTable(args.addTable[0], args.addTable[1])
 		
 			
 if __name__ == "__main__":
