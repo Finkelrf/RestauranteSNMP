@@ -5,6 +5,8 @@ from PyQt4.QtCore import *
 from PyQt4 import QtGui
 from SnmpComm import *
 from TablePopup import *
+from AddMenuItens import *
+from RmMenuItens import *
 
 class Window(QtGui.QWidget):
     BUTTON_IMAGE_FREE = 'table-green.png'
@@ -19,9 +21,7 @@ class Window(QtGui.QWidget):
         self.height = 300
         self.setGeometry(50, 50, self.width, self.height)
         self.setWindowTitle("Restaurant management")
-
         self.makeHome()
-
         self.show()
 
     def makeHome(self):
@@ -121,15 +121,15 @@ class Window(QtGui.QWidget):
         cod = []
         name = []
         desc = []
-        cod.append(QLabel("Code"))
-        cod[0].setAlignment(QtCore.Qt.AlignCenter)
-        name.append(QLabel("Name"))
-        name[0].setAlignment(QtCore.Qt.AlignCenter)
-        desc.append(QLabel("Description"))
-        desc[0].setAlignment(QtCore.Qt.AlignCenter)
-        menuInfoGrid.addWidget(cod[0],0,0)
-        menuInfoGrid.addWidget(name[0],0,1)
-        menuInfoGrid.addWidget(desc[0],0,2)
+        # cod.append(QLabel("Code"))
+        # cod[0].setAlignment(QtCore.Qt.AlignCenter)
+        # name.append(QLabel("Name"))
+        # name[0].setAlignment(QtCore.Qt.AlignCenter)
+        # desc.append(QLabel("Description"))
+        # desc[0].setAlignment(QtCore.Qt.AlignCenter)
+        # menuInfoGrid.addWidget(cod[0],0,0)
+        # menuInfoGrid.addWidget(name[0],0,1)
+        # menuInfoGrid.addWidget(desc[0],0,2)
 
         arrayOfValues = []
         listSize,arrayOfValues = SnmpComm.walk("menuTable")
@@ -144,6 +144,32 @@ class Window(QtGui.QWidget):
             menuInfoGrid.addWidget(cod[i],i,0)
             menuInfoGrid.addWidget(name[i],i,1)
             menuInfoGrid.addWidget(desc[i],i,2)
+
+        #add and remove menu buttons
+        btnLayout = QHBoxLayout()
+        outerLayout.addLayout(btnLayout)
+
+        addMenuBtn = QPushButton("Add item")
+        addMenuBtn.clicked.connect(self.addMenuItensClicked)
+        rmvMenuBtn = QPushButton("Remove item")
+        rmvMenuBtn.clicked.connect(self.rmMenuItensClicked)
+        btnLayout.addWidget(addMenuBtn)
+        btnLayout.addWidget(rmvMenuBtn)
+
+    def addMenuItensClicked(self):
+        self.addItens = AddMenuItens()
+        self.addItens.setGeometry(QRect(100, 100, 400, 200))
+        self.addItens.setWindowTitle("Add itens to menu")
+        self.addItens.show()
+
+    def rmMenuItensClicked(self):
+        self.rmItens = RmMenuItens()
+        self.rmItens.setGeometry(QRect(100, 100, 400, 100))
+        self.rmItens.setWindowTitle("Add itens to menu")
+        self.rmItens.show()
+
+
+
 
 
 
