@@ -223,10 +223,6 @@ int setRestStatus(int new_status) {
 	}
 	fgets(buffer, BUFF_SIZE, output);
 	status = atoi(buffer);
-	if (ret != 0) {
-		syslog (LOG_INFO,"error while setting status variable.\n");
-		return EXIT_FAILURE;
-	}
 	fclose(output);
 	return status;
 }

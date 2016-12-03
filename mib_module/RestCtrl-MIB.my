@@ -305,6 +305,19 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		STATUS mandatory
 		DESCRIPTION "Numero de pedidos atualmente do restaurante"
 	::= {restCtrl 10}
+	
+--
+-- Traps
+--
+estoqueTrap	OBJECT IDENTIFIER ::= { restCtrl 11 }
+
+estoqueItemChange NOTIFICATION-TYPE
+    OBJECTS { estoqueIndex, name, amount }
+    STATUS  current
+    DESCRIPTION
+        "A estoqueTrap trap signifies that the estoque has changed."
+    ::= { estoqueTrap 1 }
+
 
 	
 	

@@ -1,4 +1,8 @@
 import argparse
+import subprocess
+
+ERROR = 1
+OK = 0
 
 LIVRE="0"
 OCUPADA="1"
@@ -10,7 +14,8 @@ PRONTO = "2"
 
 tables_capacity_list = ['4p', '2p']
 #CONFIG_PATH = "/home/finkel/Documents/RestauranteSNMP/restaurante_app/config/"
-CONFIG_PATH = "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/config/"
+#CONFIG_PATH = "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/config/"
+CONFIG_PATH = "config/"
 MESAS_CONFIG_FILE = "mesas.conf"
 PEDIDOS_CONFIG_FILE = "pedidos.conf"
 FUNCIONARIOS_CONFIG_FILE = "funcionarios.conf"
@@ -174,8 +179,106 @@ def getDailyOrdersInfo():
 def getCurrOrders():
 	with open(CONFIG_PATH + CURR_ORDERS_CONFIG_FILE) as f:
 		return f.read().strip()
-	
 		
+def getNextTableId():
+	count = 0
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE) as f:
+		for line in f:
+			if "mesas_" in line:
+				count += int(line.strip().split('=')[1])
+	return count+1
+	
+def addTable(new_cap,status):
+	search_str = "mesas_" + new_cap
+	cap_dict = {}
+	dump_str = ""
+	add_str = ""
+	new_id = getNextTableId()
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE, 'r') as f:
+		f.seek(0)
+		for line in f:
+			""" O arquivo de configuracao contem entradas do tipo: mesas_4p=2:
+			 Significando que existem 2 mesas com capacidade para 4 pessoas. Para atualizar a quantidade de mesas com uma certa capacidade,
+			 criamos um dicionario mapeando {capacidade-da-mesa : numero-de-mesas-com-essa-capacidade}
+			 Essa parte do codigo atualiza o numero de mesas configuradas:
+			"""
+			if "mesas_" in line:
+				# Adiciona uma entrada no dicionario, fazendo um parse na linha lida, exemplo: mesas_(4p)=(2) --> {4p : 2}
+				table_cap = line.strip().split('_')[1].split('=')[0]
+				num_table_cap = line.strip().split('=')[1]
+				cap_dict[table_cap] = int(num_table_cap)
+				if new_cap == table_cap[0]:
+					cap_dict[table_cap] = int(num_table_cap) + 1
+			else:
+				dump_str += line				
+	add_str += "\nmesa_" + str(new_id) + "=0" 
+	add_str += "\ncapacidade_" + str(new_id) + "=" + new_cap
+	add_str += "\nstatus_" + str(new_id) + "=" + status
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE + ".temp", 'w') as f:
+		for key, value in cap_dict.items():
+			f.write("mesas_" + key + "=" + str(value) + '\n')
+		f.write(dump_str.strip())
+		f.write('\n' + add_str.strip())
+	subprocess.call(['mv', CONFIG_PATH + MESAS_CONFIG_FILE + ".temp", CONFIG_PATH + MESAS_CONFIG_FILE])
+	
+"""
+function updateMesasConf(table_num, table_cap, num_clients)
+params: (str) table_num : o numero da mesa que foi encontrada como livre e com capacidade suportada
+	    (str) table_cap : capacidade da mesa encontrada
+		(str) num_clients : numero de clientes a serem alocados para essa mesa
+
+Essa funcao tem por objetivo atualizar o arquivo contendo as configuracoes das mesas do restaurante. A funcao procura pelas linhas onde estao definidas
+as configuracoes da mesa livre encontrada e as modifica para alocar os novos clientes nessa mesa."""
+def updateMesasConf(table_num, table_cap, num_clients):
+	dump_str = ""
+	add_str = ""
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE, 'r') as f:
+		for line in f:
+			if "mesas_" in line:
+				dump_str += line
+			elif "mesa_" + table_num in line:
+				add_str = "mesa_" + table_num + "=" + num_clients
+			elif "capacidade_" + table_num in line:
+				add_str += "\n" + line
+			elif "status_" + table_num in line:
+				#Essa linha nao eh mais necessaria 
+				dump_str = dump_str
+			else:
+				dump_str += line
+				
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE + ".temp", 'w') as f:
+		f.write(dump_str)
+		f.write(add_str)
+	subprocess.call(['mv', CONFIG_PATH + MESAS_CONFIG_FILE + ".temp", CONFIG_PATH + MESAS_CONFIG_FILE])
+
+""" 
+function: addClients(num_clients)
+params: (str) num_clients
+
+Aloca um certo numero de clientes a uma mesa livre.
+A funcao procura por uma mesa livre que suporte o numero de clientes desejados e chama a funcao updateMesasConf para fazer 
+a atualizacao do arquivo de configuracao. Se nao acha nenhuma mesa disponivel, nao aloca nada e retorna erro. """
+def addClients(num_clients):
+	found = False
+	d = getAllTablesStatus()
+	# example: d = {'1' : ['2','2','0'] } where { table_num : [<num clientes atualmente sentados>,<max capacidade mesa>,<status>]
+	for key, value in d.items():
+		#Se o numero de clientes novos for menor ou igual a capacidade da mesa, e se a mesa estiver livre: salva os dados da mesa.
+		if int(num_clients) <= int(value[1]) and value[2] == '0':
+			found = True
+			table_num = key
+			table_cap = value[1]
+			break
+	# Se achou alguma mesa livre
+	if found == True:
+		updateMesasConf(table_num, table_cap, num_clients)
+		return OK
+	else:
+		return ERROR
+		
+
+		
+			
 def main():
 	
 	#~ The argparse generates the software usage automatically
@@ -197,7 +300,9 @@ def main():
 	parser.add_argument('-nd', action='store_true', dest='num_daily_orders',  				help='Obtem numero de pedidos no arquivo')
 	parser.add_argument('-d', action='store_true', dest='daily_orders_info',  				help='Obtem info do numero de pedidos diarios')
 	parser.add_argument('-o', action='store_true', dest='curr_orders',  					help='Obtem numero de pedidos atual')
-	parser.add_argument('-a', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
+	parser.add_argument('-ao', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
+	parser.add_argument('-at', nargs=2, type=str, metavar=('CAPACIDADE', 'STATUS'), dest='addTable',		help='Insere nova mesa na configuracao do restaurante')
+	parser.add_argument('-ac', nargs=1, type=str, metavar='NUM_CLIENTS', dest='addClients',	help='Aloca um certo numero de clientes a uma mesa livre que possua capacidade para o num de clientes desejado')
 	args = parser.parse_args()
 	
 	if args.c:
@@ -248,6 +353,14 @@ def main():
 		print getCurrOrders()
 	if args.daily_orders_info:
 		getDailyOrdersInfo()
+	if args.addTable:
+		if args.addTable[0]+"p" not in tables_capacity_list:
+			print "Uma mesa com capacidade "+ args.addTable[0] + " nao eh suportada"
+		else:
+			addTable(args.addTable[0], args.addTable[1])
+	if args.addClients:
+		if addClients(args.addClients[0]) != OK:
+			print "Error while adding clients to table"
 		
 			
 if __name__ == "__main__":

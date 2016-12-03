@@ -23,7 +23,7 @@ struct order_info {
 };
 
 struct estoque_item_info {
-	unsigned long item_name[BUFF_SIZE];
+	char item_name[BUFF_SIZE];
 	unsigned long amount;	
 };
 

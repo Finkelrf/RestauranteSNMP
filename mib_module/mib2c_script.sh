@@ -8,17 +8,18 @@ export MIBDIRS
 #echo env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf lotAtual
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf lotAtual
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf numFunc
-env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf currNumOrders
+#env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf currNumOrders
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.scalar.conf status
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf mesasTable
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf ordersTable
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf estoqueTable
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf dailyOrdersTable
 #env MIBS="+RestCtrl-MIB" mib2c -c mib2c.mfd.conf menuTable
-#env MIBS="+ALIGERA-MIB" mib2c -c mib2c.notify.conf e1Traps
+env MIBS="+RestCtrl-MIB" mib2c -c mib2c.notify.conf estoqueTrap
 
 #$MIBDIRS MIBS="+ALIGERA-MIB" mib2c -c mib2c.scalar.conf chan
 #$MIBDIRS MIBS="+ALIGERA-MIB" mib2c -c mib2c.mfd.conf chanTable
+#$MIBDIRS MIBS="+ALIGERA-MIB" mib2c -c mib2c.notify.conf chanTraps
 #$MIBDIRS MIBS="+ALIGERA-MIB" mib2c -c mib2c.notify.conf chanTraps
 
 #MIBS="+ALIGERA-MIB" mib2c -c mib2c.scalar.conf chan

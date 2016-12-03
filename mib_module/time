@@ -1,0 +1,47 @@
+dailyOrdersTable_data_access.c:     * cache->enabled to 0.
+dailyOrdersTable_data_access.c:    cache->timeout = DAILYORDERSTABLE_CACHE_TIMEOUT; /* seconds */
+dailyOrdersTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+dailyOrdersTable_interface.c:    netsnmp_assert((0 == cache->valid) || (1 == cache->expired));
+dailyOrdersTable_interface.c:    return dailyOrdersTable_container_load((netsnmp_container*)cache->magic);
+dailyOrdersTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+dailyOrdersTable_interface.c:    container = (netsnmp_container*)cache->magic;
+dailyOrdersTable_interface.c:    if_ctx->cache->flags = NETSNMP_CACHE_DONT_INVALIDATE_ON_SET;
+dailyOrdersTable_interface.c:        if_ctx->cache->magic = (void*)if_ctx->container;
+estoqueTable_data_access.c:     * cache->enabled to 0.
+estoqueTable_data_access.c:    cache->timeout = ESTOQUETABLE_CACHE_TIMEOUT; /* seconds */
+estoqueTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+estoqueTable_interface.c:    netsnmp_assert((0 == cache->valid) || (1 == cache->expired));
+estoqueTable_interface.c:    return estoqueTable_container_load((netsnmp_container*)cache->magic);
+estoqueTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+estoqueTable_interface.c:    container = (netsnmp_container*)cache->magic;
+estoqueTable_interface.c:    if_ctx->cache->flags = NETSNMP_CACHE_DONT_INVALIDATE_ON_SET;
+estoqueTable_interface.c:        if_ctx->cache->magic = (void*)if_ctx->container;
+Arquivo binário estoqueTable_interface.o coincide com o padrão
+Arquivo binário estoqueTable.so coincide com o padrão
+menuTable_data_access.c:     * cache->enabled to 0.
+menuTable_data_access.c:    cache->timeout = MENUTABLE_CACHE_TIMEOUT; /* seconds */
+menuTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+menuTable_interface.c:    netsnmp_assert((0 == cache->valid) || (1 == cache->expired));
+menuTable_interface.c:    return menuTable_container_load((netsnmp_container*)cache->magic);
+menuTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+menuTable_interface.c:    container = (netsnmp_container*)cache->magic;
+menuTable_interface.c:    if_ctx->cache->flags = NETSNMP_CACHE_DONT_INVALIDATE_ON_SET;
+menuTable_interface.c:        if_ctx->cache->magic = (void*)if_ctx->container;
+mesasTable_data_access.c:     * cache->enabled to 0.
+mesasTable_data_access.c:    cache->timeout = MESASTABLE_CACHE_TIMEOUT; /* seconds */
+mesasTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+mesasTable_interface.c:    netsnmp_assert((0 == cache->valid) || (1 == cache->expired));
+mesasTable_interface.c:    return mesasTable_container_load((netsnmp_container*)cache->magic);
+mesasTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+mesasTable_interface.c:    container = (netsnmp_container*)cache->magic;
+mesasTable_interface.c:    if_ctx->cache->flags = NETSNMP_CACHE_DONT_INVALIDATE_ON_SET;
+mesasTable_interface.c:        if_ctx->cache->magic = (void*)if_ctx->container;
+ordersTable_data_access.c:     * cache->enabled to 0.
+ordersTable_data_access.c:    cache->timeout = ORDERSTABLE_CACHE_TIMEOUT; /* seconds */
+ordersTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+ordersTable_interface.c:    netsnmp_assert((0 == cache->valid) || (1 == cache->expired));
+ordersTable_interface.c:    return ordersTable_container_load((netsnmp_container*)cache->magic);
+ordersTable_interface.c:    if((NULL == cache) || (NULL == cache->magic)) {
+ordersTable_interface.c:    container = (netsnmp_container*)cache->magic;
+ordersTable_interface.c:    if_ctx->cache->flags = NETSNMP_CACHE_DONT_INVALIDATE_ON_SET;
+ordersTable_interface.c:        if_ctx->cache->magic = (void*)if_ctx->container;
