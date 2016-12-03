@@ -15,16 +15,17 @@
  * */
 unsigned long get_number_tables() {
 	FILE *output;
-	unsigned long   number_tables=0;
+	char *ret;
+	unsigned long   number_tables;
     char app_path[120] = APP_PYTHON_PATH;	//Caminho para executar o software auxiliar
-    char buffer[20];
+    char buffer[BUFF_SIZE];
 	strcat(app_path, "-n");					// Concatena na string o argumento necessario para o software auxiliar
 	output = popen (app_path, "r"); 		// Faz a chamada ao aplicativo, e analisa o resultado
 	if (!output) {
 		syslog (LOG_INFO,"incorrect parameters or too many files.\n");
 		return EXIT_FAILURE;
 	}
-	fgets(buffer, 10, output);				
+	fgets(buffer, BUFF_SIZE, output);
 	number_tables = strtoul(buffer, NULL, 10);
 	pclose(output);
 	return number_tables;

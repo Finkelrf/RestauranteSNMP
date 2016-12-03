@@ -1,5 +1,6 @@
 import argparse
 import subprocess
+import random
 
 ERROR = 1
 OK = 0
@@ -14,8 +15,8 @@ PRONTO = "2"
 
 tables_capacity_list = ['4p', '2p']
 #CONFIG_PATH = "/home/finkel/Documents/RestauranteSNMP/restaurante_app/config/"
-#CONFIG_PATH = "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/config/"
-CONFIG_PATH = "config/"
+CONFIG_PATH = "/home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/config/"
+#CONFIG_PATH = "config/"
 MESAS_CONFIG_FILE = "mesas.conf"
 PEDIDOS_CONFIG_FILE = "pedidos.conf"
 FUNCIONARIOS_CONFIG_FILE = "funcionarios.conf"
@@ -276,6 +277,46 @@ def addClients(num_clients):
 	else:
 		return ERROR
 		
+"""
+function updateOrder()
+params: None
+
+Essa funcao eh responsavel por atualizar o arquivo de configuracao que contem as informacoes dos pedidos feitos.
+Ela escolhe randomicamente um pedido, dentre o total de pedidos no arquivo e o atualiza.
+O arquivo contem linhas do tipo: 1,1,encaminhado --> onde cada item representa: <numero-da-mesa>,<item-pedido>,<status-do-pedido>"""
+def updateOrder():
+	count = 0
+	i = 1
+	dump_str = ""
+	add_str = ""
+	with open(CONFIG_PATH + PEDIDOS_CONFIG_FILE) as f:
+		for line in f:
+			count += 1
+			
+	# Randomicamente escolhe um pedido para atualizar
+	random_line = random.randint(1, count)
+	with open(CONFIG_PATH + PEDIDOS_CONFIG_FILE) as f:
+		for line in f:
+			if i == random_line:
+				line_split = line.strip().split(',')
+				table_number = line_split[0]
+				item = line_split[1]
+				status = line_split[2]
+				if status == "encaminhado":
+					status = "preparo"
+				elif status == "preparo":
+					status = "pronto"
+				add_str = "\n" + table_number + "," + item + "," + status
+				i += 1
+			else:
+				dump_str += line
+				i += 1
+				
+	with open(CONFIG_PATH + PEDIDOS_CONFIG_FILE, "w") as f:
+		f.write(dump_str.strip())
+		f.write(add_str)
+
+		
 
 		
 			
@@ -303,6 +344,7 @@ def main():
 	parser.add_argument('-ao', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
 	parser.add_argument('-at', nargs=2, type=str, metavar=('CAPACIDADE', 'STATUS'), dest='addTable',		help='Insere nova mesa na configuracao do restaurante')
 	parser.add_argument('-ac', nargs=1, type=str, metavar='NUM_CLIENTS', dest='addClients',	help='Aloca um certo numero de clientes a uma mesa livre que possua capacidade para o num de clientes desejado')
+	parser.add_argument('-up', action='store_true', dest='update_order',	help='Atualiza o status de um pedido')
 	args = parser.parse_args()
 	
 	if args.c:
@@ -361,6 +403,8 @@ def main():
 	if args.addClients:
 		if addClients(args.addClients[0]) != OK:
 			print "Error while adding clients to table"
+	if args.update_order:
+		updateOrder()
 		
 			
 if __name__ == "__main__":

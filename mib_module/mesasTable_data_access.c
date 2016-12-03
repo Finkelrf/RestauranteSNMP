@@ -210,10 +210,9 @@ mesasTable_container_load(netsnmp_container *container)
 	number_tables = get_number_tables();
 	get_mesas_info(mesas);
 	
-	
+	syslog(LOG_INFO, "11111 number_tables: %lu", number_tables);
 	
     DEBUGMSGTL(("verbose:mesasTable:mesasTable_container_load","called\n"));
-
     /*
      * TODO:351:M: |-> Load/update data in the mesasTable container.
      * loop over your mesasTable data, allocate a rowreq context,
@@ -229,13 +228,15 @@ mesasTable_container_load(netsnmp_container *container)
          * data context will be set from the param (unless NULL,
          *      in which case a new data context will be allocated)
          */
+         syslog(LOG_INFO, "22222222222222222");
         rowreq_ctx = mesasTable_allocate_rowreq_ctx(NULL);
         if (NULL == rowreq_ctx) {
-            snmp_log(LOG_ERR, "memory allocation failed\n");
+            syslog(LOG_INFO, "memory allocation failed\n");
             return MFD_RESOURCE_UNAVAILABLE;
         }
+        syslog(LOG_INFO, "333333333333333333");
         if(MFD_SUCCESS != mesasTable_indexes_set(rowreq_ctx, mesasIndex)) {
-            snmp_log(LOG_ERR,"error setting index while loading mesasTable data.\n");
+            syslog(LOG_INFO,"error setting index while loading mesasTable data.\n");
             mesasTable_release_rowreq_ctx(rowreq_ctx);
             continue;
         }
