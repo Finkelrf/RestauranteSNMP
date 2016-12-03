@@ -31,6 +31,7 @@ OBJS_estoqueTable=estoqueTable.o \
 	estoqueTable_data_access.o \
 	estoqueTable_data_get.o \
 	estoqueTable_data_set.o \
+	estoqueTrap.o
 	
 OBJS_dailyOrdersTable=dailyOrdersTable.o \
 	dailyOrdersTable_interface.o \

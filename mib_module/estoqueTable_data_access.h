@@ -40,7 +40,7 @@ extern "C" {
      * TODO:180:o: Review estoqueTable cache timeout.
      * The number of seconds before the cache times out
      */
-#define ESTOQUETABLE_CACHE_TIMEOUT   60
+#define ESTOQUETABLE_CACHE_TIMEOUT   10
 
 void estoqueTable_container_init(netsnmp_container **container_ptr_ptr,
                              netsnmp_cache *cache);

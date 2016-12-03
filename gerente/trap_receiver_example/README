@@ -1,0 +1,1 @@
+Criei esse trap_receiver.py so pra mostrar um exemplo de como receber uma trap vinda do agente usando o PySNMP.

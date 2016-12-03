@@ -232,6 +232,12 @@ estoqueTable_container_load(netsnmp_container *container)
             snmp_log(LOG_ERR, "memory allocation failed\n");
             return MFD_RESOURCE_UNAVAILABLE;
         }
+        else {
+			if(estoque[i].amount < 100) {
+				syslog(LOG_INFO, "estoque[%d], SENDING TRAP for change in amount",i);
+				send_estoqueItemChange_trap(estoqueIndex, estoque[i].item_name, (unsigned long) estoque[i].amount);
+			}
+		}
         if(MFD_SUCCESS != estoqueTable_indexes_set(rowreq_ctx
                                , estoqueIndex
                )) {
