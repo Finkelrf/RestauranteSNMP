@@ -19,13 +19,14 @@ class Window(QtGui.QWidget):
     numMesas =0
     def __init__(self):
         super(Window, self).__init__()
+        self.showingTables = 0
         self.width = 800
         self.height = 300
         self.setGeometry(50, 50, self.width, self.height)
         self.setWindowTitle("Restaurant management")
         self.makeHome()
         self.show()
-        TrapHandler();
+        #TrapHandler();
 
 
     def makeHome(self):
@@ -47,12 +48,13 @@ class Window(QtGui.QWidget):
         self.lotAtual = SnmpComm.get("lotAtual.0")
         self.capacidade = SnmpComm.get("capacidade.0")
         northLayout.addWidget(titleLabel)
-        lotCapLabel = QLabel(self.lotAtual+"/"+self.capacidade)
-        self.setFixedWidgetSize(lotCapLabel,100,100)
-        lotCapLabel.setFont(self.font)
-        lotCapLabel.setAlignment(QtCore.Qt.AlignRight)
-        northLayout.addWidget(lotCapLabel)
+        self.lotCapLabel = QLabel(self.lotAtual+"/"+self.capacidade)
+        self.setFixedWidgetSize(self.lotCapLabel,100,100)
+        self.lotCapLabel.setFont(self.font)
+        self.lotCapLabel.setAlignment(QtCore.Qt.AlignRight)
+        northLayout.addWidget(self.lotCapLabel)
 
+       
 
         #sideLayout
         btnTables = QPushButton("Tables")
@@ -69,7 +71,18 @@ class Window(QtGui.QWidget):
         sideLayout.addWidget(btnMenu)
         sideLayout.addWidget(btnOrders)
 
-        
+        #check if rest is open or closed
+        statusRest = SnmpComm.get("status.0")
+        if statusRest == "aberto(0)":
+            btnText = "Open"
+        else:
+            btnText = "Closed"
+        self.openClosedButton = QPushButton(btnText)
+        self.setFixedWidgetSize(self.openClosedButton,100,100)
+        self.openClosedButton.clicked.connect(self.openCloseBtnClicked)
+        sideLayout.addWidget(self.openClosedButton)
+
+
         #layouts structure
         vbox.addLayout(northLayout)
         vbox.addLayout(middleLayout)
@@ -84,14 +97,31 @@ class Window(QtGui.QWidget):
         timer.timeout.connect(self.updateInfo)
         timer.start(1000)
 
+    def openCloseBtnClicked(self):
+        statusRest = SnmpComm.get("status.0")
+        if statusRest == "aberto(0)":
+            SnmpComm.set("status.0","1")
+            btnText = "Closed"
+            self.openClosedButton.setStyleSheet('color: red;')
+        else:
+            SnmpComm.set("status.0","0")
+            btnText = "Open"
+            self.openClosedButton.setStyleSheet('color: black;')
+        self.openClosedButton.setText(btnText)
+
     def updateInfo(self):
         #check if any table has changed function
         newLotAtual = SnmpComm.get("lotAtual.0")
         newCapacidade = SnmpComm.get("capacidade.0")
         if newCapacidade != self.capacidade or newLotAtual != self.lotAtual:
-            self.showTablesFunction()
+            self.lotAtual = newLotAtual
+            self.capacidade  = newCapacidade
+            self.lotCapLabel.setText(self.lotAtual+"/"+self.capacidade)
+            if self.showingTables == 1:
+                self.showTablesFunction()
 
     def showMenuFunction(self):
+        self.showingTables = 0
         self.clearLayout(self.changeableLayout)
         outerLayout = QVBoxLayout()
         self.changeableLayout.addLayout(outerLayout)
@@ -164,6 +194,7 @@ class Window(QtGui.QWidget):
 
 
     def showTablesFunction(self):
+        self.showingTables = 1
         self.clearLayout(self.changeableLayout)
         tablesGrid = QtGui.QGridLayout()
         self.changeableLayout.addLayout(tablesGrid)
@@ -260,6 +291,7 @@ class Window(QtGui.QWidget):
 
 
     def showOrdersFunction(self):
+        self.showingTables = 0
         self.clearLayout(self.changeableLayout)
         outerLayout = QVBoxLayout()
         self.changeableLayout.addLayout(outerLayout)

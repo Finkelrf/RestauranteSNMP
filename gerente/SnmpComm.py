@@ -8,6 +8,7 @@ class SnmpComm:
 	mib = "-mRestCtrl-MIB "
 	#SNMP_PARAMETERS = " -v1 -cpublic localhost "
 	SNMP_PARAMETERS = IPADDR+cmdParameters+MIBDIRS+mib
+	SNMP_PARAMETERS_SET = "-c private -v2c "+MIBDIRS+"-mRestCtrl-MIB"+IPADDR
 	varNames = ["Integer32:","Counter32:","INTEGER:","STRING:","Gauge32:","Timeticks:","IpAddress"]
 	statusDict = {0: "livre(0)",1: "ocupada(1)",2: "reservada(2)",3: "indisponivel(3)"}
 
@@ -39,7 +40,7 @@ class SnmpComm:
 	@staticmethod
 	def executeCmd(cmd):
 		cmdList = cmd.split(" ")
-		print cmdList
+		# print cmdList
 		proc = subprocess.Popen(cmdList, stdout=subprocess.PIPE)
 		return proc.stdout.read()
 
@@ -47,7 +48,7 @@ class SnmpComm:
 	def walk(OID):
 		#Return numberOfObjects,arrayOfValues.
 		cmdString = "snmpwalk"+SnmpComm.SNMP_PARAMETERS+OID
-		print "cmdString: "+cmdString
+		# print "cmdString: "+cmdString
 		cmdOutput = SnmpComm.executeCmd(cmdString)
 		n,listOfResp = SnmpComm.parseResponse(cmdOutput)
 		if(n != -1):
@@ -59,10 +60,10 @@ class SnmpComm:
 	def get(OID):
 		#Return value of requested OID
 		cmdString = "snmpget"+SnmpComm.SNMP_PARAMETERS+OID
-		print "cmdString: "+cmdString
+		# print "cmdString: "+cmdString
 		cmdOutput = SnmpComm.executeCmd(cmdString)
 		n,listOfResp = SnmpComm.parseResponse(cmdOutput)
-		print listOfResp
+		# print listOfResp
 		if(n != -1):
 			return listOfResp[0]
 		else:
@@ -71,8 +72,8 @@ class SnmpComm:
 	@staticmethod
 	def set(OID,inputValue):
 		#Return value of requested OID
-		cmdString = "snmpset"+SnmpComm.SNMP_PARAMETERS+OID
-		print "cmdString: "+cmdString
+		cmdString = "snmpset "+SnmpComm.SNMP_PARAMETERS_SET+OID+" "+"i "+str(inputValue)
+		# print "cmdString: "+cmdString
 		cmdOutput = SnmpComm.executeCmd(cmdString)
 		n,listOfResp = SnmpComm.parseResponse(cmdOutput)
 		if(n != -1):
@@ -105,7 +106,7 @@ class SnmpComm:
 				if j == len(SnmpComm.varNames):
 					#variable is from a unknown type
 					print "variable type not found in line "+line[i]+" from "+str(numOfResp)+" lines"
-					print line
+					# print line
 					return objCounter,retString
 				#compare with a list of variables
 				if line[i].find(SnmpComm.varNames[j]) != -1: 
