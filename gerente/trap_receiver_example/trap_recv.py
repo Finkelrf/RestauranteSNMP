@@ -3,6 +3,8 @@ from pysnmp.entity import engine, config
 from pysnmp.carrier.asyncore.dgram import udp
 from pysnmp.entity.rfc3413 import ntfrcv
 
+IP = '192.168.1.11'
+
 # Create SNMP engine with autogenernated engineID and pre-bound
 # to socket transport dispatcher
 snmpEngine = engine.SnmpEngine()
@@ -13,7 +15,7 @@ snmpEngine = engine.SnmpEngine()
 config.addTransport(
     snmpEngine,
     udp.domainName + (1,),
-    udp.UdpTransport().openServerMode(('127.0.0.1', 162))
+    udp.UdpTransport().openServerMode((IP, 162))
 )
 
 # SNMPv1/2c setup

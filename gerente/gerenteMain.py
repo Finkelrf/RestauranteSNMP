@@ -7,6 +7,7 @@ from SnmpComm import *
 from TablePopup import *
 from AddMenuItens import *
 from RmMenuItens import *
+from TrapHandler import *
 
 class Window(QtGui.QWidget):
     BUTTON_IMAGE_FREE = 'table-green.png'
@@ -24,6 +25,8 @@ class Window(QtGui.QWidget):
         self.setWindowTitle("Restaurant management")
         self.makeHome()
         self.show()
+        TrapHandler();
+
 
     def makeHome(self):
         #define layouts 
@@ -77,9 +80,9 @@ class Window(QtGui.QWidget):
         self.showTablesFunction()
 
         #check update timer
-        # timer = QtCore.QTimer(self)
-        # timer.timeout.connect(self.updateInfo)
-        # timer.start(1000)
+        timer = QtCore.QTimer(self)
+        timer.timeout.connect(self.updateInfo)
+        timer.start(1000)
 
     def updateInfo(self):
         #check if any table has changed function
