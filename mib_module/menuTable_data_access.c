@@ -217,7 +217,9 @@ menuTable_container_load(netsnmp_container *container)
     while(fgets(description, sizeof(description), f)) {
 		//Remove trailing chars from line
 		description[strlen(description)-1] = '\0';
-
+		if (strlen(description) < 2) {
+			continue;
+		}
         /*
          * TODO:352:M: |   |-> set indexes in new menuTable rowreq context.
          * data context will be set from the param (unless NULL,
