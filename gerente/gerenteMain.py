@@ -209,7 +209,7 @@ class Window(QtGui.QWidget):
             #add the created imageButton to the grid
             tablesGrid.addWidget(self.tableButton[counter],j,i)
             counter = counter+1
-            print str(i)+" "+str(j)
+            # print str(i)+" "+str(j)
             if i > tablesPerLine:
                 i = 0
                 j = j+1
