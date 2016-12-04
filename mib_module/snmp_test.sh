@@ -5,8 +5,8 @@ MIBDIRS="/lib/mibs:/usr/share/mibs/ietf:/usr/share/mibs/netsnmp:/usr/share/snmp/
 
 IPADDR=localhost
 
-#snmptable $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB mesasTable
-snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB mesasTable
+snmptable $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB mesasTable
+#snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB mesasTable
 #snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB ordersTable
 #snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB menuTable
 #snmpwalk $IPADDR -c public -v2c -M$MIBDIRS -mRestCtrl-MIB estoqueTable

@@ -195,8 +195,13 @@ def getDailyOrdersInfo():
 			print line.strip()
 			
 def getCurrOrders():
-	with open(CONFIG_PATH + CURR_ORDERS_CONFIG_FILE) as f:
-		return f.read().strip()
+	with open(CONFIG_PATH + PEDIDOS_CONFIG_FILE) as f:
+		count = 0
+		for line in f:
+			if line.strip():
+				if line.strip().split(',')[2] != "pronto":
+					count += 1
+		return count
 		
 def getNumItemsMenu():
 	count = 0
@@ -362,7 +367,7 @@ def main():
 	parser.add_argument('-e', action='store_true', dest='estoque_info',  					help='Obtem info do estoque')
 	parser.add_argument('-nd', action='store_true', dest='num_daily_orders',  				help='Obtem numero de pedidos no arquivo')
 	parser.add_argument('-d', action='store_true', dest='daily_orders_info',  				help='Obtem info do numero de pedidos diarios')
-	parser.add_argument('-o', action='store_true', dest='curr_orders',  					help='Obtem numero de pedidos atual')
+	parser.add_argument('-o', action='store_true', dest='curr_orders',  					help='Obtem numero de pedidos nao prontos atual')
 	parser.add_argument('-nm', action='store_true', dest='num_items_menu',  				help='Obtem numero de itens no menu')
 	parser.add_argument('-ao', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
 	parser.add_argument('-at', nargs=2, type=str, metavar=('CAPACIDADE', 'STATUS'), dest='addTable',		help='Insere nova mesa na configuracao do restaurante')

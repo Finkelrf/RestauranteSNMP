@@ -15,13 +15,14 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 	      FROM SNMPv2-TC;
 
 	restCtrl OBJECT IDENTIFIER ::= {enterprises 12619}
-
+--
 -- Restaurante entries
+--
 	capacidade OBJECT-TYPE
 		SYNTAX Counter32
 		MAX-ACCESS read-only
 		STATUS mandatory
-		DESCRIPTION "Numero de pessoas maximo no restaurante"
+		DESCRIPTION "Numero de maximo de pessoas no restaurante"
 	::= {restCtrl 1}
 
 	lotAtual OBJECT-TYPE
@@ -35,7 +36,7 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		SYNTAX Counter32
 		MAX-ACCESS read-only
 		STATUS mandatory
-		DESCRIPTION "Numero de fucnionarios do restaurante"
+		DESCRIPTION "Numero de funcionarios do restaurante"
 	::= {restCtrl 6}
 		
 	status OBJECT-TYPE
@@ -44,6 +45,14 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		STATUS mandatory
 		DESCRIPTION "Status do restaurante"
 	::= {restCtrl 7}
+
+	currNumOrders OBJECT-TYPE
+		SYNTAX Counter32
+		MAX-ACCESS read-only
+		STATUS mandatory
+		DESCRIPTION "Numero de pedidos atualmente nao pronto do restaurante"
+	::= {restCtrl 10}
+
 
 --
 -- Tabela de Pedidos diarios
@@ -296,15 +305,6 @@ RestCtrl-MIB DEFINITIONS ::= BEGIN
 		DESCRIPTION "Quantidade ainda disponivel, em kg"
 	::= {estoqueEntry 3}
 	
---
--- Numero atual de pedidos no restaurante
---
-	currNumOrders OBJECT-TYPE
-		SYNTAX Counter32
-		MAX-ACCESS read-only
-		STATUS mandatory
-		DESCRIPTION "Numero de pedidos atualmente do restaurante"
-	::= {restCtrl 10}
 	
 --
 -- Traps
