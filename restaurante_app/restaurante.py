@@ -7,7 +7,8 @@ OK = 0
 
 LIVRE="0"
 OCUPADA="1"
-INDISPONIVEL="2"
+RESERVADA="2"
+INDISPONIVEL="3"
 
 ENCAMINHADO = "0"
 EM_PREPARO = "1"
@@ -24,6 +25,7 @@ ESTOQUE_CONFIG_FILE = "estoque.conf"
 DAILY_ORDERS_CONFIG_FILE = "pedidos_diarios.conf"
 CURR_ORDERS_CONFIG_FILE = "pedidos_atual.conf"
 REST_CONFIG_FILE = "rest.conf"
+MENU_CONFIG_FILE = "menu.conf"
 
 def getCurrentCapacity():
 	count = 0
@@ -73,6 +75,8 @@ def getFreeTablesStatus(d):
 					d[table_number].append(getTableCapacity(table_number))
 				if status == "livre":
 					d[table_number].append(LIVRE)
+				elif status == "reservada":
+					d[table_number].append(RESERVADA)
 				else:
 					d[table_number].append(INDISPONIVEL)
 	
@@ -97,30 +101,43 @@ def getNumberOfOccupiedTables():
 		for line in f:
 			# We expect something as: mesa_1=2
 			if 'mesa_' in line:
+				if int(line.strip().split('=')[1]) != 0: 
+					count += 1
+	return count
+
+def getTotalNumTables():
+	count = 0
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE) as f:
+		for line in f:
+			# We expect something as: mesa_1=2
+			if 'mesa_' in line:
 				count += 1
 	return count
+
 	
 def getNumPedidos():
 	count = 0
 	with open(CONFIG_PATH + PEDIDOS_CONFIG_FILE) as f:
 		for line in f:
-			count += 1
+			if line.strip():
+				count += 1
 	return count
 
 def getPedidos():
 	with open(CONFIG_PATH + PEDIDOS_CONFIG_FILE) as f:
 		for line in f:
-			line_split = line.strip().split(',')
-			table_number = line_split[0]
-			item = line_split[1]
-			status = line_split[2]
-			if status == "encaminhado":
-				status = ENCAMINHADO
-			elif status == "preparo":
-				status = EM_PREPARO
-			else:
-				status = PRONTO
-			print table_number + ',' + item + ',' + status
+			if line.strip():
+				line_split = line.strip().split(',')
+				table_number = line_split[0]
+				item = line_split[1]
+				status = line_split[2]
+				if status == "encaminhado":
+					status = ENCAMINHADO
+				elif status == "preparo":
+					status = EM_PREPARO
+				else:
+					status = PRONTO
+				print table_number + ',' + item + ',' + status
 			
 def getStatus():
 	with open(CONFIG_PATH + REST_CONFIG_FILE) as f:
@@ -151,7 +168,7 @@ def setPedido(arg_list):
 	item = arg_list[1]
 	#Open file as "a", to append text at the end of the file
 	with open(CONFIG_PATH + PEDIDOS_CONFIG_FILE, "a") as f:
-		f.write(table_num + "," + item + ",encaminhado")
+		f.write("\n" + table_num + "," + item + ",encaminhado")
 
 def getNumItemsEstoque():
 	count = 0
@@ -180,6 +197,14 @@ def getDailyOrdersInfo():
 def getCurrOrders():
 	with open(CONFIG_PATH + CURR_ORDERS_CONFIG_FILE) as f:
 		return f.read().strip()
+		
+def getNumItemsMenu():
+	count = 0
+	with open(CONFIG_PATH + MENU_CONFIG_FILE) as f:
+		for line in f:
+			if line.strip():
+				count += 1
+	return count
 		
 def getNextTableId():
 	count = 0
@@ -314,11 +339,7 @@ def updateOrder():
 				
 	with open(CONFIG_PATH + PEDIDOS_CONFIG_FILE, "w") as f:
 		f.write(dump_str.strip())
-		f.write(add_str)
-
-		
-
-		
+		f.write(add_str)		
 			
 def main():
 	
@@ -328,7 +349,8 @@ def main():
 	parser.add_argument('-c', action='store_true', dest='c',  			 					help='Obtem capacidade atual')
 	parser.add_argument('-m', action='store_true', dest='max_capacity',  					help='Obtem capacidade maxima')
 	parser.add_argument('-t', action='store_true', dest='tables_occupied',  				help='Obtem mesas ocupadas')
-	parser.add_argument('-n', action='store_true', dest='number_of_tables_occupied',		help='Obtem numero de mesas ocupadas')
+	parser.add_argument('-nc', action='store_true', dest='number_of_tables_occupied',		help='Obtem numero de mesas ocupadas')
+	parser.add_argument('-n', action='store_true', dest='number_of_total_tables',			help='Obtem numero de mesas ocupadas')
 	parser.add_argument('-s', action='store_true', dest='status',  							help='Obtem status de todas as mesas')
 	parser.add_argument('-np',action='store_true', dest='num_pedidos',  					help='Obtem numero total de pedidos')
 	parser.add_argument('-p', action='store_true', dest='pedido',  							help='Obtem pedidos de todas as mesas')
@@ -341,6 +363,7 @@ def main():
 	parser.add_argument('-nd', action='store_true', dest='num_daily_orders',  				help='Obtem numero de pedidos no arquivo')
 	parser.add_argument('-d', action='store_true', dest='daily_orders_info',  				help='Obtem info do numero de pedidos diarios')
 	parser.add_argument('-o', action='store_true', dest='curr_orders',  					help='Obtem numero de pedidos atual')
+	parser.add_argument('-nm', action='store_true', dest='num_items_menu',  				help='Obtem numero de itens no menu')
 	parser.add_argument('-ao', nargs=2, type=str, metavar=('MESA', 'ITEM'),dest='addOrder',	help='Cria pedido do item ITEM para a mesa MESA')
 	parser.add_argument('-at', nargs=2, type=str, metavar=('CAPACIDADE', 'STATUS'), dest='addTable',		help='Insere nova mesa na configuracao do restaurante')
 	parser.add_argument('-ac', nargs=1, type=str, metavar='NUM_CLIENTS', dest='addClients',	help='Aloca um certo numero de clientes a uma mesa livre que possua capacidade para o num de clientes desejado')
@@ -353,6 +376,8 @@ def main():
 		print getMaxCapacity()
 	if args.number_of_tables_occupied:
 		print getNumberOfOccupiedTables()
+	if args.number_of_total_tables:
+		print getTotalNumTables()
 	if args.tables_occupied:
 		d = {}
 		d = getOccupiedTables()
@@ -384,7 +409,7 @@ def main():
 	if args.func_info:
 		 getFuncInfo()
 	if args.addOrder:
-		setPedido(args.a)
+		setPedido(args.addOrder)
 	if args.num_items_estoque:
 		print getNumItemsEstoque()
 	if args.estoque_info:
@@ -393,6 +418,8 @@ def main():
 		print getDailyOrdersEntries()
 	if args.curr_orders:
 		print getCurrOrders()
+	if args.num_items_menu:
+		print getNumItemsMenu()
 	if args.daily_orders_info:
 		getDailyOrdersInfo()
 	if args.addTable:

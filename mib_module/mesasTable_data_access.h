@@ -40,7 +40,7 @@ extern "C" {
      * TODO:180:o: Review mesasTable cache timeout.
      * The number of seconds before the cache times out
      */
-#define MESASTABLE_CACHE_TIMEOUT   60
+#define MESASTABLE_CACHE_TIMEOUT   5
 
 void mesasTable_container_init(netsnmp_container **container_ptr_ptr,
                              netsnmp_cache *cache);
