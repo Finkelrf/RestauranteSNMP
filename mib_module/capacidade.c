@@ -26,38 +26,43 @@ init_capacidade(void)
         ));
 }
 
+/*
+ * handle_capacidade(...)
+ * 
+ * Funcao responsavel por obter a capacidade maxima do restaurante. Ela faz uma chamada ao programa auxiliar restaurante.py,
+ * e analisa o resultado dessa chamada.
+ * O codigo dessa funcao foi quase todo gerado automaticamente pelo software mib2c, sendo somente necessario modificar algumas partes.
+ * 
+ */
 int
 handle_capacidade(netsnmp_mib_handler *handler,
                           netsnmp_handler_registration *reginfo,
                           netsnmp_agent_request_info   *reqinfo,
                           netsnmp_request_info         *requests)
 {
-    /* We are never called for a GETNEXT if it's registered as a
-       "instance", as it's "magically" handled for us.  */
-
-    /* a instance handler also only hands us one request at a time, so
-       we don't need to loop over a list of requests; we'll only get one. */
        
     FILE *output;
-    char app_path[120] = APP_PYTHON_PATH;
+    char app_path[120] = APP_PYTHON_PATH;				//Caminho para executar o software auxiliar	
     char buffer[BUFF_SIZE];
     unsigned long cap;
     
     switch(reqinfo->mode) {
 		
         case MODE_GET:
-			strcat(app_path, "-m");
-			syslog(LOG_INFO, "app_path: %s", app_path);
-			output = popen (app_path, "r"); // Call the restaurante app, and parse the ouput
+			strcat(app_path, "-m");						// Concatena na string o argumento necessario para o software auxiliar
+			output = popen (app_path, "r"); 			// Faz a chamada ao aplicativo, e analisa o resultado
 			if (!output)
 			{
 				syslog (LOG_INFO,"incorrect parameters or too many files.\n");
 				return EXIT_FAILURE;
 			}
+			// A leitura deve ser de apenas um string representando a capacidade maxima do restaurante
 			fgets(buffer, BUFF_SIZE, output);
+			// Converte o string em unsigned long
 			cap = strtoul(buffer, NULL, 10);
 			pclose(output);
-		
+			
+			// Atualiza o objeto 
             snmp_set_var_typed_value(requests->requestvb, ASN_COUNTER, &cap, sizeof(cap));
             break;
 
