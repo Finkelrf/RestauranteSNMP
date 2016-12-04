@@ -40,7 +40,7 @@ extern "C" {
      * TODO:180:o: Review menuTable cache timeout.
      * The number of seconds before the cache times out
      */
-#define MENUTABLE_CACHE_TIMEOUT   60
+#define MENUTABLE_CACHE_TIMEOUT   5
 
 void menuTable_container_init(netsnmp_container **container_ptr_ptr,
                              netsnmp_cache *cache);
