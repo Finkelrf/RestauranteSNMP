@@ -2,6 +2,7 @@ import argparse
 import subprocess
 import random
 import time
+from restaurante import *
 
 CONFIG_PATH = "config/"
 MENU_CONFIG_FILE = "menu.conf"
@@ -30,8 +31,9 @@ def main():
 	while(1):
 		# Randomicamente escolhe uma das 4 funcoes para executar e dorme por 5 segundos antes de continuar.
 		op = random.randint(1, 4)
+		#op = 1
 		if op == 1:
-			addMesa()
+			atualizaMesa()
 		elif op == 2:
 			addPedido()
 		elif op ==3:
@@ -39,6 +41,51 @@ def main():
 		elif op == 4:
 			atualizaPedido()
 		time.sleep(5)
+	
+
+def atualizaMesa():
+	found = False
+	info = getAllTablesStatus()
+	dump_str = ""
+	add_str = ""
+	mesa_str = ""
+	cap_str = ""
+	status_str = ""
+	num_tables_list = []
+	for k,v in info.items():
+		num_tables_list.append(k)
+	
+	num_mesa = random.choice(num_tables_list)
+	num_mesa = "1"
+	print "Atualizando status da mesa " + num_mesa
+	with open(CONFIG_PATH + MESAS_CONFIG_FILE) as f:
+		for line in f:
+			if line != '\n' and line.strip().split('_')[1].split('=')[0] == str(num_mesa):
+				if "mesa_" in line: 
+					mesa_str = "mesa_" + num_mesa + "=0"
+				elif "capacidade_" in line:
+					cap_str += line.strip()
+				elif "status_" in line:
+					status_str += line.strip()
+			else:
+				if line != '\n':
+					dump_str += line
+		
+		if "livre" in status_str.strip():
+			found = False
+			print "Mesa ja esta livre"
+		else:
+			found = True
+			status_str = "status_" + str(num_mesa) + "=livre"
+	if found == True:
+		with open(CONFIG_PATH + MESAS_CONFIG_FILE, "w") as f:
+			f.write(dump_str)
+			f.write("\n" + mesa_str)
+			f.write("\n" + cap_str)
+			f.write("\n" + status_str)
+		
+	
+	
 		
 """
 function: addMesa()

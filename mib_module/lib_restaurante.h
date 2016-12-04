@@ -3,7 +3,7 @@
 
 #define BUFF_SIZE 20
 #define MAX_SIZE 100
-#define MAX_MESAS 20
+#define MAX_MESAS 100
 #define MAX_ESTOQUE 100
 #define MAX_ORDERS 100
 #define APP_PYTHON_PATH "python /home/rocordoni/Documentos/gerencia/RestauranteSNMP/restaurante_app/restaurante.py "

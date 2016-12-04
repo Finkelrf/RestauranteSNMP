@@ -355,7 +355,7 @@ def main():
 	parser.add_argument('-m', action='store_true', dest='max_capacity',  					help='Obtem capacidade maxima')
 	parser.add_argument('-t', action='store_true', dest='tables_occupied',  				help='Obtem mesas ocupadas')
 	parser.add_argument('-nc',action='store_true', dest='number_of_tables_occupied',		help='Obtem numero de mesas ocupadas')
-	parser.add_argument('-n', action='store_true', dest='number_of_total_tables',			help='Obtem numero de mesas ocupadas')
+	parser.add_argument('-n', action='store_true', dest='number_of_total_tables',			help='Obtem numero total de mesas')
 	parser.add_argument('-s', action='store_true', dest='status',  							help='Obtem status de todas as mesas')
 	parser.add_argument('-np',action='store_true', dest='num_pedidos',  					help='Obtem numero total de pedidos')
 	parser.add_argument('-p', action='store_true', dest='pedido',  							help='Obtem pedidos de todas as mesas')
