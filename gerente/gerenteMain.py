@@ -14,7 +14,8 @@ class Window(QtGui.QWidget):
     BUTTON_IMAGE_RESERVED = 'table-blue.png'
     BUTTON_IMAGE_UNAVAILABLE= 'table-black.png'
     tablePopup = None
-
+    mesasStatusList = []
+    numMesas =0
     def __init__(self):
         super(Window, self).__init__()
         self.width = 800
@@ -40,8 +41,8 @@ class Window(QtGui.QWidget):
         titleLabel = QLabel("Restaurant Management")
         titleLabel.setFont(self.font)
         self.setFixedWidgetSize(titleLabel,100,100)
-        self.lotAtual = SnmpComm.getSnmpVar("lotAtual")
-        self.capacidade = SnmpComm.getSnmpVar("capacidade")
+        self.lotAtual = SnmpComm.get("lotAtual.0")
+        self.capacidade = SnmpComm.get("capacidade.0")
         northLayout.addWidget(titleLabel)
         lotCapLabel = QLabel(self.lotAtual+"/"+self.capacidade)
         self.setFixedWidgetSize(lotCapLabel,100,100)
@@ -76,14 +77,14 @@ class Window(QtGui.QWidget):
         self.showTablesFunction()
 
         #check update timer
-        timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.updateInfo)
-        timer.start(1000)
+        # timer = QtCore.QTimer(self)
+        # timer.timeout.connect(self.updateInfo)
+        # timer.start(1000)
 
     def updateInfo(self):
         #check if any table has changed function
-        newLotAtual = SnmpComm.getSnmpVar("lotAtual")
-        newCapacidade = SnmpComm.getSnmpVar("capacidade")
+        newLotAtual = SnmpComm.get("lotAtual.0")
+        newCapacidade = SnmpComm.get("capacidade.0")
         if newCapacidade != self.capacidade or newLotAtual != self.lotAtual:
             self.showTablesFunction()
 
@@ -97,12 +98,9 @@ class Window(QtGui.QWidget):
 
         codLabel = QLabel("Code")
         codLabel.setAlignment(QtCore.Qt.AlignCenter)
-        nameLabel = QLabel("Name")
-        nameLabel.setAlignment(QtCore.Qt.AlignCenter)
         descLabel = QLabel("Description")
         descLabel.setAlignment(QtCore.Qt.AlignCenter)
         labelsLayout.addWidget(codLabel)
-        labelsLayout.addWidget(nameLabel)
         labelsLayout.addWidget(descLabel)
         outerLayout.addLayout(labelsLayout)
 
@@ -119,31 +117,19 @@ class Window(QtGui.QWidget):
         menuInfoGrid = QGridLayout(self.scrollAreaWidgetContents)
         outerLayout.addLayout(menuInfoGrid)
         cod = []
-        name = []
         desc = []
-        # cod.append(QLabel("Code"))
-        # cod[0].setAlignment(QtCore.Qt.AlignCenter)
-        # name.append(QLabel("Name"))
-        # name[0].setAlignment(QtCore.Qt.AlignCenter)
-        # desc.append(QLabel("Description"))
-        # desc[0].setAlignment(QtCore.Qt.AlignCenter)
-        # menuInfoGrid.addWidget(cod[0],0,0)
-        # menuInfoGrid.addWidget(name[0],0,1)
-        # menuInfoGrid.addWidget(desc[0],0,2)
+
 
         arrayOfValues = []
-        listSize,arrayOfValues = SnmpComm.walk("menuTable")
+        listSize,arrayOfValues = SnmpComm.walk("menuEntry.2")
 
-        for i in range(1,listSize+1):
-            cod.append(QLabel("Code"))
+        for i in range(0,listSize):
+            cod.append(QLabel(str(i)))
             cod[i].setAlignment(QtCore.Qt.AlignCenter)
-            name.append(QLabel("Name"))
-            name[i].setAlignment(QtCore.Qt.AlignCenter)
-            desc.append(QLabel("Description"))
+            desc.append(QLabel(arrayOfValues[i]))
             desc[i].setAlignment(QtCore.Qt.AlignCenter)
             menuInfoGrid.addWidget(cod[i],i,0)
-            menuInfoGrid.addWidget(name[i],i,1)
-            menuInfoGrid.addWidget(desc[i],i,2)
+            menuInfoGrid.addWidget(desc[i],i,1)
 
         #add and remove menu buttons
         btnLayout = QHBoxLayout()
@@ -191,18 +177,21 @@ class Window(QtGui.QWidget):
         j = 0
         counter = 0
         self.tableButton = []
-        while counter<int(self.capacidade):
+        self.numMesas,self.mesasStatusList = SnmpComm.walk("mesasEntry.4")
+        print str(self.numMesas)+" mesas no estabelescimento"
+        print self.mesasStatusList
+        while counter<int(self.numMesas):
             #create images and start event handlers
             self.tableButton.append(ExtendedQLabel.ExtendedQLabel(self))
             self.tableButton[counter].setId(counter)
-            tableStatus = SnmpComm.getTableStatus(counter)
-            if tableStatus == TableStatusEnum.Free:
+            tableStatus = self.mesasStatusList[counter]
+            if tableStatus == "livre(0)":
                 self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_FREE))
-            elif tableStatus == TableStatusEnum.Occupied:
+            elif tableStatus == "ocupada(1)":
                 self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_OCCUPIED))
-            elif tableStatus == TableStatusEnum.Reserved:
+            elif tableStatus == "reservada(2)":
                 self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_RESERVED))
-            elif tableStatus == TableStatusEnum.Unavailable:
+            elif tableStatus == "indisponivel(3)":
                 self.tableButton[counter].setPixmap(QPixmap(self.BUTTON_IMAGE_UNAVAILABLE))
             self.tableButton[counter].setScaledContents(False)
             self.connect(self.tableButton[counter], SIGNAL('clicked()'), self.buttonClicked)
@@ -217,7 +206,7 @@ class Window(QtGui.QWidget):
                 i = i+1
 
     def buttonClicked(self):
-        tableId = self.sender().id
+        tableId = self.sender().id +1
         print('Button {0} Clicked'.format(tableId))
         if self.tablePopup is None:
             #cria objeto no primeiro acesso
@@ -239,6 +228,7 @@ class Window(QtGui.QWidget):
         elif function is "menu":
             self.showMenuFunction()
         elif function is "orders":
+            self.showOrdersFunction()
             print "orders"
 
         
@@ -264,6 +254,64 @@ class Window(QtGui.QWidget):
 
     def setFixedWidgetSize(self,widget,width,height):
         widget.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
+
+
+    def showOrdersFunction(self):
+        self.clearLayout(self.changeableLayout)
+        outerLayout = QVBoxLayout()
+        self.changeableLayout.addLayout(outerLayout)
+
+        #labels 
+        labelsLayout = QHBoxLayout()
+
+        itemLabel = QLabel("Item")
+        itemLabel.setAlignment(QtCore.Qt.AlignCenter)
+        tableLabel = QLabel("Table")
+        tableLabel.setAlignment(QtCore.Qt.AlignCenter)
+        statusLabel = QLabel("Status")
+        statusLabel.setAlignment(QtCore.Qt.AlignCenter)
+        labelsLayout.addWidget(itemLabel)
+        labelsLayout.addWidget(tableLabel)
+        labelsLayout.addWidget(statusLabel)
+        outerLayout.addLayout(labelsLayout)
+
+        #scroll area
+        self.scrollArea = QtGui.QScrollArea(self)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QtGui.QWidget(self.scrollArea)
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 380, 247))
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        outerLayout.addWidget(self.scrollArea)
+
+
+        #info grid
+        ordersInfoGrid = QGridLayout(self.scrollAreaWidgetContents)
+        outerLayout.addLayout(ordersInfoGrid)
+        itens = []
+        tables = []
+        status = []
+
+
+        itensList = []
+        tablesList = []
+        statusList = []
+        listSize,itensList = SnmpComm.walk("ordersEntry.2")
+        listSize,tablesList = SnmpComm.walk("ordersEntry.3")
+        listSize,statusList = SnmpComm.walk("ordersEntry.4")
+
+        for i in range(0,listSize):
+            itemDesc = SnmpComm.get("menuEntry.2."+str(itensList[i]))
+            itens.append(QLabel(itemDesc))
+            itens[i].setAlignment(QtCore.Qt.AlignCenter)
+            tables.append(QLabel(tablesList[i]))
+            tables[i].setAlignment(QtCore.Qt.AlignCenter)
+            status.append(QLabel(statusList[i]))
+            status[i].setAlignment(QtCore.Qt.AlignCenter)
+            ordersInfoGrid.addWidget(itens[i],i,0)
+            ordersInfoGrid.addWidget(tables[i],i,1)
+            ordersInfoGrid.addWidget(status[i],i,2)
+
+        
 
 def run():
     app = QtGui.QApplication(sys.argv)

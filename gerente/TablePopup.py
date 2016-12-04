@@ -37,7 +37,7 @@ class TablePopup(QWidget):
 		capacityTextLabel.setFont(font)
 		capacityTextLabel.setAlignment(QtCore.Qt.AlignCenter)
 
-		capacity = SnmpComm.getTable(tableId).capacity
+		capacity = SnmpComm.get("mesasEntry.2."+str(tableId))
 		self.capacityTextEdit = QTextEdit(str(capacity))
 		self.capacityTextEdit.setFont(font)
 		self.capacityTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
@@ -48,7 +48,7 @@ class TablePopup(QWidget):
 		clientsTextLabel.setFont(font)
 		clientsTextLabel.setAlignment(QtCore.Qt.AlignCenter)
 
-		clients = SnmpComm.getTable(tableId).clients
+		clients = SnmpComm.get("mesasEntry.3."+str(tableId))
 		self.clientsTextEdit = QTextEdit(str(clients))
 		self.clientsTextEdit.setFont(font)
 		self.clientsTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
@@ -59,13 +59,25 @@ class TablePopup(QWidget):
 		statusTextLabel.setFont(font)
 		statusTextLabel.setAlignment(QtCore.Qt.AlignCenter)
 
-		statusStr = SnmpComm.getTable(tableId).getStatusStr()
+		statusStr = SnmpComm.get("mesasEntry.4."+str(tableId))
 		self.statusComboBox = QtGui.QComboBox(self)
 		self.statusComboBox.setFont(font)
 		self.statusComboBox.addItem("Free")
 		self.statusComboBox.addItem("Occupied")
 		self.statusComboBox.addItem("Reserved")
-		self.statusComboBox.addItem("Unavailable")		
+		self.statusComboBox.addItem("Unavailable")
+		tableObj = SnmpComm.getTable(self.idInfoLabel.text())
+		self.capacityTextEdit.setText(str(tableObj.capacity))
+		self.capacityTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
+		self.clientsTextEdit.setText(str(tableObj.clients))
+		self.clientsTextEdit.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter) #vertical align not working properlly
+		statusStr = tableObj.getStatusStr()
+		index = self.statusComboBox.findText(statusStr)
+		if index >= 0:
+			self.statusComboBox.setCurrentIndex(index)
+		print "status str: "+statusStr
+		print "index: "+str(index)
+		
 
 		#buttons
 		self.btnApply = QPushButton("Apply")
@@ -126,4 +138,7 @@ class TablePopup(QWidget):
 		print("Closing Popup")
 		self.apearing = False
 		event.accept()
+
+
+
 

@@ -2,13 +2,17 @@ from random import randint
 import subprocess 
 
 class SnmpComm:
-	MIBDIRS = "/lib/mibs:/usr/share/mibs/ietf:/usr/share/mibs/netsnmp:/usr/share/snmp/mibs/ "
-	IPADDR = " localhost "
+	MIBDIRS = "-M/lib/mibs:/usr/share/mibs/ietf:/usr/share/mibs/netsnmp:/usr/share/snmp/mibs/:/usr/local/share/snmp/mibs "
+	IPADDR = " 192.168.1.11 "
 	cmdParameters = "-c public -v2c "
 	mib = "-mRestCtrl-MIB "
-	SNMP_PARAMETERS = " -v1 -cpublic localhost "
-	# SNMP_PARAMETERS = IPADDR+cmdParameters+MIBDIRS+mib
+	#SNMP_PARAMETERS = " -v1 -cpublic localhost "
+	SNMP_PARAMETERS = IPADDR+cmdParameters+MIBDIRS+mib
 	varNames = ["Integer32:","Counter32:","INTEGER:","STRING:","Gauge32:","Timeticks:","IpAddress"]
+	statusDict = {0: "livre(0)",1: "ocupada(1)",2: "reservada(2)",3: "indisponivel(3)"}
+
+
+
 	@staticmethod
 	def getSnmpVar(variableName):
 		if variableName == "lotAtual":
@@ -24,8 +28,7 @@ class SnmpComm:
 
 	@staticmethod
 	def getTable(tableId):
-		table = Table(tableId,9,9,TableStatusEnum.Occupied)
-		print "SnmpComm refreshing table OBJ"
+		table = Table(SnmpComm.get("mesasEntry.1."+str(tableId)),SnmpComm.get("mesasEntry.2."+str(tableId)),SnmpComm.get("mesasEntry.3."+str(tableId)),SnmpComm.get("mesasEntry.4."+str(tableId)))
 		return table
 
 	@staticmethod
@@ -44,7 +47,7 @@ class SnmpComm:
 	def walk(OID):
 		#Return numberOfObjects,arrayOfValues.
 		cmdString = "snmpwalk"+SnmpComm.SNMP_PARAMETERS+OID
-		print cmdString
+		print "cmdString: "+cmdString
 		cmdOutput = SnmpComm.executeCmd(cmdString)
 		n,listOfResp = SnmpComm.parseResponse(cmdOutput)
 		if(n != -1):
@@ -56,8 +59,10 @@ class SnmpComm:
 	def get(OID):
 		#Return value of requested OID
 		cmdString = "snmpget"+SnmpComm.SNMP_PARAMETERS+OID
+		print "cmdString: "+cmdString
 		cmdOutput = SnmpComm.executeCmd(cmdString)
 		n,listOfResp = SnmpComm.parseResponse(cmdOutput)
+		print listOfResp
 		if(n != -1):
 			return listOfResp[0]
 		else:
@@ -67,6 +72,7 @@ class SnmpComm:
 	def set(OID,inputValue):
 		#Return value of requested OID
 		cmdString = "snmpset"+SnmpComm.SNMP_PARAMETERS+OID
+		print "cmdString: "+cmdString
 		cmdOutput = SnmpComm.executeCmd(cmdString)
 		n,listOfResp = SnmpComm.parseResponse(cmdOutput)
 		if(n != -1):
@@ -105,7 +111,7 @@ class SnmpComm:
 				if line[i].find(SnmpComm.varNames[j]) != -1: 
 					break
 			objCounter = objCounter+1
-			index = line[i].find(SnmpComm.varNames[j]) + len(SnmpComm.varNames[j])
+			index = line[i].find(SnmpComm.varNames[j]) + len(SnmpComm.varNames[j])+1
 			retString.append(line[i][index:])
 
 		return objCounter,retString
@@ -125,5 +131,5 @@ class Table(object):
 		self.status = status
 
 	def getStatusStr(self):
-		dict = {TableStatusEnum.Free: 'Free', TableStatusEnum.Occupied: 'Occupied', TableStatusEnum.Reserved: 'Reserved', TableStatusEnum.Unavailable: 'Unavailable'}
+		dict = {"livre(0)": 'Free', "ocupada(1)": 'Occupied', "reservada(2)": 'Reserved', "indisponivel(3)": 'Unavailable'}
 		return dict[self.status]
