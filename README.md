@@ -35,6 +35,21 @@ Implementação de um Agente, Gerente SNMP assim como um Simulador da operação
 		E finalmente reinicie o servico snmpd:
 			- > sudo service snmpd restart
 
+
+		
+
+
+		Para o gerente instale oo pacotes necessarios com os seguintes comandos
+		- sudo apt-get install python-qt4
+		- sudo pip install pysnmp
+
+		Para executar o gerente execute 
+		- python RestauranteSNMP/gerente/gerenteMain.py
+
+
+
+		
+
 -- Uso:
 	
 		Apos executar a configuracao do agente, ele esta apto a receber/enviar requisicoes/respostas SNMP.
