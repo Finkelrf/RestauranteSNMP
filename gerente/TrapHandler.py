@@ -2,14 +2,21 @@
 from pysnmp.entity import engine, config
 from pysnmp.carrier.asyncore.dgram import udp
 from pysnmp.entity.rfc3413 import ntfrcv
+import sys
+from PyQt4 import QtGui
+from threading import Thread
+from time import sleep
+from TrapHandler import *
+from teste import *
 
 IP = '192.168.1.11'
 
 class TrapHandler():
-    def __init__(self):    
+    def __init__(self,out_q):    
         # Create SNMP engine with autogenernated engineID and pre-bound
         # to socket transport dispatcher
         snmpEngine = engine.SnmpEngine()
+
 
         # Transport setup
 
@@ -34,6 +41,8 @@ class TrapHandler():
                                                                                 contextName.prettyPrint()))
             for name, val in varBinds:
                 print('%s = %s' % (name.prettyPrint(), val.prettyPrint()))
+            
+            out_q.put("teste")
 
 
         # Register SNMP Application at the SNMP engine
@@ -48,3 +57,8 @@ class TrapHandler():
         except:
             snmpEngine.transportDispatcher.closeDispatcher()
             raise
+
+
+
+
+

@@ -8,6 +8,8 @@ from TablePopup import *
 from AddMenuItens import *
 from RmMenuItens import *
 from TrapHandler import *
+from multiprocessing import Queue
+from threading import Thread
 
 class Window(QtGui.QWidget):
     BUTTON_IMAGE_FREE = 'table-green.png'
@@ -17,6 +19,8 @@ class Window(QtGui.QWidget):
     tablePopup = None
     mesasStatusList = []
     numMesas =0
+
+
     def __init__(self):
         super(Window, self).__init__()
         self.showingTables = 0
@@ -26,7 +30,7 @@ class Window(QtGui.QWidget):
         self.setWindowTitle("Restaurant management")
         self.makeHome()
         self.show()
-        #TrapHandler();
+        
 
 
     def makeHome(self):
@@ -97,6 +101,17 @@ class Window(QtGui.QWidget):
         timer.timeout.connect(self.updateInfo)
         timer.start(1000)
 
+        q = Queue()
+        t1 = Thread(target = TrapHandler, args=(q,))
+        t2 = Thread(target = self.trapListener, args=(q,))
+        t1.start()
+        t2.start()
+
+    def trapListener(in_q):
+        data = in_q.get()
+        dial = Dialog(data)
+        dial.show()
+
     def openCloseBtnClicked(self):
         statusRest = SnmpComm.get("status.0")
         if statusRest == "aberto(0)":
@@ -108,6 +123,7 @@ class Window(QtGui.QWidget):
             btnText = "Open"
             self.openClosedButton.setStyleSheet('color: black;')
         self.openClosedButton.setText(btnText)
+
 
     def updateInfo(self):
         #check if any table has changed function
